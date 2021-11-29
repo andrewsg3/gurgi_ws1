@@ -1,18 +1,40 @@
 <!DOCTYPE HTML>
     <head>
         <title>{{ title }}</title>
+        <link rel="stylesheet" href="../static/assets/css/style.css">
     </head>
     <body>
-        <h1>GU Rocketry Weather Station mk1</h1>
-        <h2>The date and time on the server is: {{ time }}</h2>
-        <h2>Current conditions:</h2>
-        <ul>
-            <li>Temperature: {{ temp }} &#176; C</li>
-            <li>Pressure: {{ pressure }} bar</li>
-            <li>Humidity: {{ humid }}</li>
-            <li>Wind speed: {{ wind_v }} m/s</li>
-            <li>Wind direction: {{ wind_d }} &#176; </li>
-            <li>4-hour Rainfall: {{ rain }} mm</li>
-        </ul>
+        <main id="main">
+            <header id="header" class="header">
+                <div class="container">
+                    <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" width="50" height="50">
+                    <h1 id="title">GU Rocketry Weather Station mk1</h1>
+                </div>
+            </header>
+
+            <div id="timebox">
+                <h2 id="datetime">Last updated: {{ time }}</h2>
+            </div>
+
+            <div id="content" class="flex-container">
+                <div id="databox" class="flex-item">
+                    <h2 id="datatitle">Current conditions:</h2>
+                    <ul>
+                        <li>Temperature: {{ temp }} &#176;C</li>
+                        <li>Pressure: {{ pressure }} bar</li>
+                        <li>Humidity: {{ humid }}%</li>  
+                        <li>Wind speed: {{ wind_v }} m/s</li>
+                        <li>Wind direction: {{ wind_d }} &#176;</li>
+                        <li>4-hour Rainfall: {{ rain }} mm</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <footer id="footer">
+                The GUR Weather Station is a Ground Infrastructure project. For details, contact team lead James Hayes.<br>
+                Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
+            </footer>
+        </main>
     </body>
 </html>
