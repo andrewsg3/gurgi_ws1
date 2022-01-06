@@ -12,7 +12,7 @@ class windvane():
     """
     def __init__(self):
         # Interfacing
-        self.channel = 0    
+        self.channel = 0 # Channel of ADC from which to read voltage 
         #self.adc = MCP3008(channel = self.channel)
         self.r1 = 4700 # The resistor used in the system
         self.vin = 5 #input voltage
