@@ -21,7 +21,7 @@ The sensing portion of the weather station is largely based on the project avail
     
 
 <h2>Prerequisites:</h2>
-Hardware
+<h3>Hardware</h3>
 <ul>
   <li>Raspberry Pi <br>https://thepihut.com/products/raspberry-pi-4-model-b?gclid=Cj0KCQiAw9qOBhC-ARIsAG-rdn5R2-kfO6yMEr01fbIaPO6ap6t9Ut63xb4w5BCDGALVWb19lnMGfioaAr5iEALw_wcB</li>
   <li>BME280 Sensor <br>https://shop.pimoroni.com/products/bme280-breakout</li>
