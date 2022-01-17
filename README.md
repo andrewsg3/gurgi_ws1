@@ -5,6 +5,8 @@ This repo contains all code necessary to run the GURGI Weather Station Mk. 1.
 The weather station is designed to measure a variety of environmental variables and present them via a LAN webapp. 
 <br>
 To access the webapp, users connect to a wireless access point (WAP) via mobile or laptop, navigate to a browser, and type https://localhost.
+<br>
+The sensing portion of the weather station is largely based on the project available at https://projects.raspberrypi.org/en/projects/build-your-own-weather-station/0.
 
 <h2>Usage</h2>
 <ol>
@@ -19,9 +21,11 @@ To access the webapp, users connect to a wireless access point (WAP) via mobile 
     
 
 <h2>Prerequisites:</h2>
-Hardware
+<h3>Hardware</h3>
 <ul>
-  <li>Raspberry Pi</li>
-  <li>BME280 Sensor</li>
-  <li>MCP2008 ADC</li>
+  <li>Raspberry Pi <br>https://thepihut.com/products/raspberry-pi-4-model-b?gclid=Cj0KCQiAw9qOBhC-ARIsAG-rdn5R2-kfO6yMEr01fbIaPO6ap6t9Ut63xb4w5BCDGALVWb19lnMGfioaAr5iEALw_wcB</li>
+  <li>BME280 Sensor <br>https://shop.pimoroni.com/products/bme280-breakout</li>
+  <li>MCP3008 ADC <br>https://shop.pimoroni.com/products/microchip-analog-to-digital-convertor?variant=373567065</li>
+  <li>Argent Data Systems Weather Sensor Assembly p/n 80422 <br>https://shop.pimoroni.com/products/wind-and-rain-sensors-for-weather-station-wind-vane-anemometer-rain-gauge</li>   
+  <li>2 x RJ11 Breakout Boards <br>https://shop.pimoroni.com/products/rj11-6-pin-connector</li>
 </ul>
