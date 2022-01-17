@@ -23,5 +23,6 @@ Hardware
 <ul>
   <li>Raspberry Pi</li>
   <li>BME280 Sensor</li>
-  <li>MCP2008 ADC</li>
+  <li>80422 Weather Sensor Assembly</li>
+  <li>MCP3008 ADC</li>
 </ul>
