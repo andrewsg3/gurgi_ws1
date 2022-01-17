@@ -1,6 +1,6 @@
 """Contains functions for interfacing with a connected BME280 sensor
 """
-import bme280 #import the BME280 library; installed via: sudo pip3 install RPi.bme280
+#import bme280 #import the BME280 library; installed via: sudo pip3 install RPi.bme280
 #import smbus2 #system management bus library, used for I2C devices. Will not import unless on raspbian.
 from time import sleep #allows for timing functions
 

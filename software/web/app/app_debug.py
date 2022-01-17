@@ -21,7 +21,7 @@ db = MongoEngine()
 
 #Webapp
 app = Flask(__name__) #instantiate Flask object
-#app.config.from_object('app.config') #Address for app config file, config.py
+app.config.from_object('config') #Address for app config file, config.py
 
 #Initialise DB
 db.init_app(app)
@@ -34,8 +34,7 @@ db.init_app(app)
 #Register blueprints
 #app.register_blueprint(NAME_bp)
 
-#Initialize?
-#socketio = SocketIO(app)
+
 
 # Weather; generate random variables
 temp = round(np.random.rand() * 30, 2)
@@ -63,28 +62,11 @@ def index(): #Index function; when someone accesses root directory ("/") of flas
         }
     return render_template('index.html', **templateData)
 
-#https://www.youtube.com/watch?v=e68S9x3Rh_0 - how to implement grpythonaphs that update in realtime.
-import random
-import json
-from time import time
-from flask import make_response
+#Initialize?
+socketio = SocketIO(app)
 
-@app.route('/data',methods=["GET","POST"])
-def data():
-    data=[rain, coords]
-    response=make_response(json.dumps(data))
-    response.content_type = 'application/json'
-    return response
-
-def checker_thread():
-    while True:
-        #checker() #Receive a sample here
-        x = 1
-        time.sleep(5)
-
-
-if __name__  == '__main__':
+#if __name__  == '__main__':
     #x = threading.Thread(target = checker_thread, daemon=True)
     #x.start()
-    app.run(debug=True,port=80,host='0.0.0.0') #Start listening on port 80.
+#    app.run(debug=True,port=80,host='0.0.0.0') #Start listening on port 80.
         
