@@ -13,7 +13,8 @@ To access the webapp, users connect to a wireless access point (WAP) via mobile 
   <li>Install Anaconda: https://www.anaconda.com/ </li>
   <li>Open Anaconda, and create an environment. This way we can install packages - bits of addon code - to a version of Anaconda/Python just for this project, without installing them ontop of our base version of Anaconda/Python. To do this, open Anaconda prompt and type: "conda create gurgi"</li>
   <li>Activate the environment you created. In Anaconda prompt, type "conda activate gurgi". You'll do this everytime you open Anaconda prompt and want to use the code.</li>
-  <li>In Anaconda prompt navigate to the github repo you clonded. Type "pip3 install -r requirements.txt". This will install the required packages, which are kept in the requirements.txt file.</li>
+  <li>In Anaconda prompt navigate to the github repo you clonded. Type "pip install -r requirements.txt". This will install the required packages, which are kept in the requirements.txt file.</li>
+  <li>If you are met with the error "'pip3' is not recognized as an internal or external command, operable program or batch file.", it means pip wasn't installed with Anaconda. Type "conda -c install anaconda pip" to fix this, then try the previous step again. </li>
   <li>Once that's finished, you have everything you need to run the weather station. To trial the webapp, navigate to "gurgi_ws1/software/web/app" and type "python app.py". Now open your browser and type "https://localhost".</li>
 </ol>
     
