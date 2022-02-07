@@ -14,8 +14,6 @@
 
             <div id="timebox">
                 <h2 id="datetime">Last updated: {{ time }}</h2>
-                <h2 id="updates">Total updates since start: {{ updates }} </h2>
-                <h2 id="gps">GPS Coordinates: {{ coords }}</h2>
             </div>
 
             <div id="content" class="flex-container">
@@ -32,6 +30,12 @@
                 </div>
             </div>
 
+            <div id="timebox">
+                <h3 id="updates">Total updates since start: {{ updates }} </h3>
+                <h3 id="gps">GPS Coordinates: {{ coords }}</h3>
+                <h3><a href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
+            </div>
+
             <div>
                 <div>
                     <div id="data-container">
@@ -42,7 +46,8 @@
 
 
             <footer id="footer">
-                The Mobile Weather Station is a product of the GUR Ground Infrastructure Team. For intense confusion, contact team lead James Hayes.<br>
+                The Mobile Weather Station is a product of the GUR Ground Infrastructure Team.<br>
+                Contact Electronics Team lead Andrew Scott-George for usage information or to report a bug.<br>
                 Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
             </footer>
         </main>
