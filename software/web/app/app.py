@@ -2,58 +2,64 @@
 """
 Created on Mon Nov 29 13:05:45 2021
 @author: Andrew Scott-George 
-Program to test flask functionality.
+Main program from which webapp is run.
 """
 
+## Import libraries
+from turtle import title
 from flask import Flask, render_template #Load flask module
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit 
 from flask_mongoengine import MongoEngine
 import datetime
 import numpy as np
 import sys
 import threading
-import time
-#sys.path.append('../../')
-#import drivers.driver
+import random
+import json
+from time import time
+from time import sleep
+from flask import make_response
 
-#Create flask mongo engine
-db = MongoEngine()
+## Set params
+sampletime = 2 # 2 seconds sample rate for sensors
 
-#Webapp
-app = Flask(__name__) #instantiate Flask object
+## Initialize things
+app = Flask(__name__) # Instantiate Flask app object
 #app.config.from_object('app.config') #Address for app config file, config.py
+#from app.NAME.views import NAME_bp # Blueprints allow for different sections of webapp to be defined in different files and imported.
+#app.register_blueprint(NAME_bp) # Register blueprints
 
-#Initialise DB
-db.init_app(app)
+db = MongoEngine() # Instantiate mongo DB
 
+db.init_app(app) # Bind mongo DB to flask app
 
-## Blueprints allow for different sections of webapp to be defined in different files and imported.
-#Import blueprints
-#from app.NAME.views import NAME_bp
+## Set initial variables
+title = 'GUR Weather Station'
+temp = "Initializing..."
+pressure = "Initializing..."
+humid = "Initializing..."
+wind_v = "Initializing..."
+wind_d = "Initializing..."
+rain = "Initializing..."
+coords = "Initializing..."
+updates = 0
 
-#Register blueprints
-#app.register_blueprint(NAME_bp)
-
-#Initialize?
-#socketio = SocketIO(app)
-
-# Weather; generate random variables
-temp = round(np.random.rand() * 30, 2)
-pressure = round(1 + 0.1*np.random.rand(),2)
-humid = round(np.random.rand(),2) * 100
-wind_v = round(np.random.rand() * 20,2)
-wind_d = round(np.random.rand(),2)
-rain = round(np.random.rand() * 10,2)
-coords = '''55°52'15.9"N 4°17'11.8"W'''
-
+"""
+Route: '/'
+This root is what to do on the homepage.
+Basically, just render the main HTML.
+"""
 @app.route('/') #what to do in the root directorys, main route that loads htmlpage
 def index(): #Index function; when someone accesses root directory ("/") of flask webapp it will perform this.
+    # By redefining variables here, we can update what the page shows.
     now = datetime.datetime.now() #get current time
     timeString = now.strftime("%Y-%m-%d %H:%M")
+
+    # Could we add the ability to poll the weather station thread here? 
     templateData = {
-        'title' : 'GUR Weather Station',
+        'title' : title,
         'time' : timeString, 
-        'temp' : round(np.random.rand() * 30,2),
+        'temp' : temp,
         'pressure' : pressure,
         'humid' : humid,
         'wind_v' : wind_v,
@@ -63,28 +69,47 @@ def index(): #Index function; when someone accesses root directory ("/") of flas
         }
     return render_template('index.html', **templateData)
 
-#https://www.youtube.com/watch?v=e68S9x3Rh_0 - how to implement grpythonaphs that update in realtime.
-import random
-import json
-from time import time
-from flask import make_response
 
-@app.route('/data',methods=["GET","POST"])
-def data():
-    data=[rain, coords]
-    response=make_response(json.dumps(data))
-    response.content_type = 'application/json'
-    return response
+"""
+Route: '/update'
+This route is used to update the variables as seen by the client. It is called by javascript in index.html.
+"""
+@app.route('/update', methods=["GET","POST"])
+def update():
+    print("Updated data")
+    global updates, temp, pressure, humid, wind_v, wind_d, rain, coords
+    updates += 1
+    return {
+        'updates': updates,
+        'temperature': temp,
+        'pressure': pressure,
+        'humidity': humid,
+        'windspeed': wind_v,
+        'windvector': wind_d,
+        'rainfall': rain,
+        'datetime': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), #get current time
+        'coords:': coords
+    }
 
-def checker_thread():
+
+"""
+The following thread is intended to sample the I2C sensors at a set interval. 
+The sampling should update the local values of the variables which can be accessed when a client requests them.
+"""
+def check_sensors(sampletime):
     while True:
-        #checker() #Receive a sample here
-        x = 1
-        time.sleep(5)
+        global temp, pressure, humid, wind_v, wind_d, rain # Make reference to global variables 
+        temp = round(np.random.rand() * 30, 2)
+        pressure = round(1 + 0.1*np.random.rand(),2)
+        humid = round(100*np.random.rand(),2)
+        wind_v = round(np.random.rand() * 20,2)
+        wind_d = round(np.random.rand(),2)
+        rain = round(np.random.rand() * 10,2)
+        sleep(sampletime)
 
+sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
+sensor_thread.start() # Begin sensor checking threads
 
 if __name__  == '__main__':
-    #x = threading.Thread(target = checker_thread, daemon=True)
-    #x.start()
     app.run(debug=True,port=80,host='0.0.0.0') #Start listening on port 80.
-        
+    

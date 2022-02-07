@@ -14,6 +14,7 @@
 
             <div id="timebox">
                 <h2 id="datetime">Last updated: {{ time }}</h2>
+                <h2 id="updates">Total updates since start: {{ updates }} </h2>
                 <h2 id="gps">GPS Coordinates: {{ coords }}</h2>
             </div>
 
@@ -21,12 +22,12 @@
                 <div id="databox" class="flex-item">
                     <h2 id="datatitle">Current conditions:</h2>
                     <ul>
-                        <li>Temperature: {{ temp }} &#176;C</li>
-                        <li>Pressure: {{ pressure }} bar</li>
-                        <li>Humidity: {{ humid }}%</li>  
-                        <li>Wind speed: {{ wind_v }} m/s</li>
-                        <li>Wind direction: {{ wind_d }} &#176;</li>
-                        <li>4-hour Rainfall: {{ rain }} mm</li>
+                        <li id="temp">Temperature: {{ temp }} &#176;C</li>
+                        <li id="pressure">Pressure: {{ pressure }} bar</li>
+                        <li id="humidity">Humidity: {{ humid }}%</li>  
+                        <li id="windspeed">Wind speed: {{ wind_v }} m/s</li>
+                        <li id="windvector">Wind direction: {{ wind_d }} &#176;</li>
+                        <li id="rainfall">4-hour Rainfall: {{ rain }} mm</li>
                     </ul>
                 </div>
             </div>
@@ -41,7 +42,7 @@
 
 
             <footer id="footer">
-                The Mobile Weather Station is a product of the GUR Ground Infrastructure Team. For details, contact team lead James Hayes.<br>
+                The Mobile Weather Station is a product of the GUR Ground Infrastructure Team. For intense confusion, contact team lead James Hayes.<br>
                 Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
             </footer>
         </main>
@@ -52,4 +53,38 @@
 
 
     </body>
+
+    <script>
+        //Type as javascript
+        setInterval(function () {
+            console.log("Hello"); // Log console; debug
+            
+            var opts = { // A set of parameters passed to the fetch function.
+                method: 'GET',      
+                headers: {}
+                };
+
+            //fetch function calls a path from app.py: in this case, /update.
+            fetch('/update', opts).then(function (response) { //.then takes the output of the last thing you said and uses it as the input to the next thing you say. This is called "piping"
+            // So basically we format the output of the /update path in json format?
+                return response.json();
+                })
+
+            .then(function (body) { // Here, we declare a function that takes our formatted data from /update and calls it "body"
+                console.log(body) // Print to console the contents of body for debugging purposes. To see this, go to the webapp on a browser, right click and press inspect. Then look at console.
+                document.getElementById('temp').innerHTML = 'Temperature: '+ body.temperature +" &#176;C" // Find elements by their ID and update them to a value taken from "body", which was the output of the fetch function.
+                document.getElementById('pressure').innerHTML = 'Pressure: ' + body.pressure + " bar" 
+                document.getElementById('humidity').innerHTML = 'Humidity: ' + body.humidity + " %" 
+                document.getElementById('windspeed').innerHTML = 'Wind speed: ' + body.windspeed + " m/s" 
+                document.getElementById('windvector').innerHTML = 'Wind direction: ' + body.windvector + " &#176;"
+                document.getElementById('rainfall').innerHTML = '4-Hour Rainfall: ' + body.rainfall + " mm"; 
+                document.getElementById('updates').innerHTML = 'Total updates since start: ' + body.updates
+                document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
+                document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
+
+            });
+        }, 1000); // Last param is time in ms, here it's set to 1s.
+
+    
+    </script>
 </html>
