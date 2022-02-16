@@ -21,7 +21,7 @@ from time import sleep
 from flask import make_response
 
 ## Set params
-sampletime = 2 # 2 seconds sample rate for sensors
+sampletime = 0.1 # 2 seconds sample rate for sensors
 
 ## Initialize things
 app = Flask(__name__) # Instantiate Flask app object
