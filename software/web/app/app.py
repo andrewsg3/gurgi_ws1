@@ -8,9 +8,14 @@ Main program from which webapp is run.
 ## Import libraries
 from turtle import title
 from flask import Flask, render_template #Load flask module
+<<<<<<< HEAD
 from flask import Response
 #from flask_socketio import SocketIO, emit 
 #from flask_mongoengine import MongoEngine
+=======
+from flask_socketio import SocketIO, emit 
+from flask_mongoengine import MongoEngine
+>>>>>>> cc76f708f1e70fc6f02b9147e852a6b87466d4bc
 import datetime
 import numpy as np
 import sys
@@ -20,7 +25,10 @@ import json
 from time import time
 from time import sleep
 from flask import make_response
+<<<<<<< HEAD
 import climate
+=======
+>>>>>>> cc76f708f1e70fc6f02b9147e852a6b87466d4bc
 
 ## Set params
 sampletime = 0.1 # 2 seconds sample rate for sensors
@@ -31,9 +39,15 @@ app = Flask(__name__) # Instantiate Flask app object
 #from app.NAME.views import NAME_bp # Blueprints allow for different sections of webapp to be defined in different files and imported.
 #app.register_blueprint(NAME_bp) # Register blueprints
 
+<<<<<<< HEAD
 #db = MongoEngine() # Instantiate mongo DB
 
 #db.init_app(app) # Bind mongo DB to flask app
+=======
+db = MongoEngine() # Instantiate mongo DB
+
+db.init_app(app) # Bind mongo DB to flask app
+>>>>>>> cc76f708f1e70fc6f02b9147e852a6b87466d4bc
 
 ## Set initial variables
 title = 'GUR Weather Station'
@@ -81,7 +95,11 @@ def update():
     print("Updated data")
     global updates, temp, pressure, humid, wind_v, wind_d, rain, coords
     updates += 1
+<<<<<<< HEAD
     documents_ = {
+=======
+    return {
+>>>>>>> cc76f708f1e70fc6f02b9147e852a6b87466d4bc
         'updates': updates,
         'temperature': temp,
         'pressure': pressure,
@@ -89,6 +107,7 @@ def update():
         'windspeed': wind_v,
         'windvector': wind_d,
         'rainfall': rain,
+<<<<<<< HEAD
         'datetime': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         'coords:': coords
     }
@@ -118,6 +137,26 @@ def check_sensors(sampletime):
         wind_v = "Coming soon..."
         wind_d = "Coming soon..."
         rain = "Coming soon..."
+=======
+        'datetime': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), #get current time
+        'coords:': coords
+    }
+
+
+"""
+The following thread is intended to sample the I2C sensors at a set interval. 
+The sampling should update the local values of the variables which can be accessed when a client requests them.
+"""
+def check_sensors(sampletime):
+    while True:
+        global temp, pressure, humid, wind_v, wind_d, rain # Make reference to global variables 
+        temp = round(np.random.rand() * 30, 2)
+        pressure = round(1 + 0.1*np.random.rand(),2)
+        humid = round(100*np.random.rand(),2)
+        wind_v = round(np.random.rand() * 20,2)
+        wind_d = round(np.random.rand(),2)
+        rain = round(np.random.rand() * 10,2)
+>>>>>>> cc76f708f1e70fc6f02b9147e852a6b87466d4bc
         sleep(sampletime)
 
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
