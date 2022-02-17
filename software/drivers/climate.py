@@ -1,7 +1,10 @@
 """Contains functions for interfacing with a connected BME280 sensor
 """
-#import bme280 #import the BME280 library; installed via: sudo pip3 install RPi.bme280
-#import smbus2 #system management bus library, used for I2C devices. Will not import unless on raspbian.
+try:
+    from smbus2 import SMBus
+except ImportError:
+    from smbus import SMBus
+from bme280 import BME280
 from time import sleep #allows for timing functions
 
 class climate_sensor():
@@ -10,8 +13,8 @@ class climate_sensor():
 	def __init__(self):
 		self.port = 1
 		self.address = 0x76 #hexadecimal address of BME280 device; depends on manufacturer, refer to documentation
-		#self.bus = smbus2.SMBus(self.port) #instantiate an SMBus object for I2C interactions
-		#bme280.load_calibration_params(self.bus, self.address) #use a bme280 library function to apply the bus and address
+		self.bus = SMBus(1) #instantiate an SMBus object for I2C interactions
+		self.bme280 = BME280(i2c_dev = self.bus) #use a bme280 library function to apply the bus and address
 
 		# Last values
 		self.p = 0 # Last value of humidity
@@ -26,8 +29,7 @@ class climate_sensor():
 		"""Takes a sample and updates 
 		
 		"""
-		bme280_data = bme280.sample(self.bus,self.address) #Sample the bme280 device and assign the output ot a variable
-		self.update(bme280_data.pressure, bme280_data.humidity, bme280_data.temperature) #return each output from the sensor
+    		self.update(self.bme280.get_pressure(),self.bme280.get_humidity(),self.bme280.get_temperature()) #return each output from the sensor
 
 	def update(self,p,h,t):
 		"""Updates member variable values for humidity, pressure, temperature
