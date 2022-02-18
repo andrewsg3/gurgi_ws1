@@ -12,60 +12,103 @@ html {
 
 body{
     background-color: var(--grey);
-    color: var(--yellow)
+    color: var(--yellow);
+    margin: 0 0 0 0;
 }
 
-#main {
-
+/* Flex stuff */
+.flex-container{
+    display:flex;
+    flex-direction: row;
+    height: auto;
+    align-items: center;
 }
 
-.header .container {
+.flex-item{
+    margin: auto;
+}
+
+
+/* Header stuff */
+#header {
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    flex-direction: column;
-  }
-
-#header {
-    padding: 5px;
-    margin: 0 0 1vw 0;
+    flex-direction: row;
+    height: 5vh;
+    margin: 0;
+    padding: 10px;
     text-align: center;
     background-color: white;
     color: var(--grey);
 }
 
 #title {
-    align-self: center;
+    /* Any changes to title font put here */
 }
 
+#spacer1{
+    width: 50px;
+}
+
+#logo {
+    width: 50px;
+    height: auto; 
+}
+
+#timebox {
+    margin: 0 0 0 0;
+    padding: auto;
+    height: 2.5vh;
+    background-color: var(--black);
+    font-size: small;
+    text-align: center;
+}
+
+
+/* Relating to the content container */
 #content{
     background-color: var(--blue);
     background-image: url("../img/space.jpeg");
-    padding: 5px;
-    margin: 0 0 1vw 0;
+    height: 65vh;
 }
 
-.flex-container{
-    display:flex;
-    height: 300px;
-    align-items: center;
+/* Relating to the table of weather variables */
+table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
 }
 
-.flex-item{
-    width:auto;
-    height:auto;
-    margin:auto;
+td {
+    text-align: left;
+}
+
+th {
+    width: 150px;
+}
+
+/* Relating to the video stream */
+#video-pic {
+    width: 30vw;
 }
 
 
-#timebox {
+
+
+/* Relating to stuff below video stream */
+#lowerbox {
+    flex-direction: row;
+    margin: 0 0 0 0;
+    padding:50px;
+    height: 7.5vh;
+    background-color: var(--grey);
+    font-size: small;
     text-align: center;
 }
 
 #updates{
     text-align: center;
-    background-color: : black;
 }
 
 #datetime {
@@ -76,17 +119,11 @@ body{
     text-align: center  ;
 }
 
-#databox{
-}
-
-#datatitle{
-
-}
-
-#datali{
-
-}
-
+/* Relating to footer */
 #footer{
     text-align: center;
+    height: 15vh;
+    margin: 0;
+    padding: 0;
 }
+

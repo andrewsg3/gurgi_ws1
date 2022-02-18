@@ -5,52 +5,65 @@
     </head>
     <body>
         <main id="main">
-            <header id="header" class="header">
-                <div class="container">
-                    <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" width="50" height="50">
-                    <h1 id="title">GU Rocketry Weather Station mk1</h1>
+            <header id="header">
+                <div class="flex-container">
+                    <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" id="logo" class="flex-item">
+                    <div id="spacer1" class="flex-item"></div>
+                    <h1 id="title" class="flex-item">GU Rocketry Weather Station mk1</h1>
                 </div>
             </header>
 
             <div id="timebox">
-                <h2 id="datetime">Last updated: {{ time }}</h2>
+                <h3 id="datetime">Last updated: {{ time }}</h3>
             </div>
 
             <div id="content" class="flex-container">
                 <div id="databox" class="flex-item">
-                    <h2 id="datatitle">Current conditions:</h2>
-                    <ul>
-                        <li id="temp">Temperature: {{ temp }} &#176;C</li>
-                        <li id="pressure">Pressure: {{ pressure }} bar</li>
-                        <li id="humidity">Humidity: {{ humid }}%</li>  
-                        <li id="windspeed">Wind speed: {{ wind_v }} m/s</li>
-                        <li id="windvector">Wind direction: {{ wind_d }} &#176;</li>
-                        <li id="rainfall">4-hour Rainfall: {{ rain }} mm</li>
-                    </ul>
+                    <h2 class="datatitle">Current conditions:</h2>
+
+                    <table>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Temperature</td>
+                            <td id="temp">{{ temp }} &#176;C</td>
+                        </tr>
+                        <tr>
+                            <td>Pressure</td>
+                            <td id="pressure">{{ pressure }} bar</td>
+                        </tr>
+                        <tr>
+                            <td>Humidity</td>
+                            <td id="humidity">{{ humid }}%</td>
+                        </tr>
+                        <tr>
+                            <td>Windspeed</td>
+                            <td id="windspeed">{{ wind_v }} m/s</td>
+                        </tr>
+                        <tr>
+                            <td>Wind Vector</td>
+                            <td id="windvector">{{ wind_d }} &#176;</td>
+                        </tr>
+                        <tr>
+                            <td>4-Hour Rainfall</td>
+                            <td id="rainfall">{{ rain }}mm</td>
+                        </tr>
+                    </table>
                 </div>
-            </div>
-
-            <div id="timebox">
-                <h3 id="updates">Total updates since start: {{ updates }} </h3>
-                <h3 id="gps">GPS Coordinates: {{ coords }}</h3>
-                <h3><a href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
-            </div>
-
-            <div>
-                <div>
-                    <div id="data-container">
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <div class="row">
+                <div id="video" class="flex-item">
+                    <h2 class="datatitle">Live Streaming</h3>
                     <div class="col-lg-8  offset-lg-2">
-                        <h3 class="mt-5">Live Streaming</h3>
-                        <img src="{{ url_for('video_feed') }}" width="100%">
+                        <img src="{{ url_for('video_feed') }}" id = "video_pic">
                     </div>
                 </div>
+            </div>
+
+            <div id="timebox" class="flex-container">
+                <h3 id="updates" class="flex-item">Total updates since start: {{ updates }} </h3>
+                <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
+                <h3 id="link" class="flex-item"><a href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
             </div>
 
             <footer id="footer">
@@ -59,12 +72,6 @@
                 Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
             </footer>
         </main>
-
-        <script>
-            //Room for script here
-        </script>
-
-
     </body>
 
     <script>
@@ -85,18 +92,18 @@
 
             .then(function (body) { // Here, we declare a function that takes our formatted data from /update and calls it "body"
                 console.log(body) // Print to console the contents of body for debugging purposes. To see this, go to the webapp on a browser, right click and press inspect. Then look at console.
-                document.getElementById('temp').innerHTML = 'Temperature: '+ body.temperature +" &#176;C" // Find elements by their ID and update them to a value taken from "body", which was the output of the fetch function.
-                document.getElementById('pressure').innerHTML = 'Pressure: ' + body.pressure + " bar" 
-                document.getElementById('humidity').innerHTML = 'Humidity: ' + body.humidity + " %" 
-                document.getElementById('windspeed').innerHTML = 'Wind speed: ' + body.windspeed + " m/s" 
-                document.getElementById('windvector').innerHTML = 'Wind direction: ' + body.windvector + " &#176;"
-                document.getElementById('rainfall').innerHTML = '4-Hour Rainfall: ' + body.rainfall + " mm"; 
+                document.getElementById('temp').innerHTML = body.temperature +" &#176;C" // Find elements by their ID and update them to a value taken from "body", which was the output of the fetch function.
+                document.getElementById('pressure').innerHTML = body.pressure + " bar" 
+                document.getElementById('humidity').innerHTML = body.humidity + " %" 
+                document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
+                document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
+                document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
                 document.getElementById('updates').innerHTML = 'Total updates since start: ' + body.updates
                 document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
                 document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
 
             });
-        }, 500); // Last param is time in ms, here it's set to 1s.
+        }, 2500); // Last param is time in ms, here it's set to 1s.
 
         // Plotting with d3
         //https://www.freecodecamp.org/learn/data-visualization/data-visualization-with-d3/dynamically-change-the-height-of-each-bar
