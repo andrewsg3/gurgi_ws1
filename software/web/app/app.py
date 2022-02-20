@@ -7,13 +7,10 @@ Main program from which webapp is run.
 
 ## Import libraries
 from turtle import title
-<<<<<<< HEAD
 from flask import Flask, render_template, Response #Load flask module
-=======
 from flask import Flask, render_template #Load flask module
 from flask import Response
 #from flask_socketio import SocketIO, emit 
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
 #from flask_mongoengine import MongoEngine
 import datetime
 import numpy as np
@@ -115,7 +112,6 @@ except:
 
 def check_sensors(sampletime):
     while True:
-<<<<<<< HEAD
         print("Check sensors called")
         global temp, pressure, humid, wind_v, wind_d, rain, coords, time # Make reference to global variables
         bme.read_all() # Read weather values
@@ -130,30 +126,6 @@ def check_sensors(sampletime):
         coords = coords
         print(climate_vals)
         sleep(sampletime)
-=======
-        global temp, pressure, humid, wind_v, wind_d, rain # Make reference to global variables
-        try:
-            bme.read_all()
-            climate_vals = bme.report()
-        except:
-            climate_vals = [0, 0, 0]
-        pressure = round(climate_vals[0]/1000,2)
-        humid = round(climate_vals[1],2)
-        temp = round(climate_vals[2],2)
-        #temp = round(np.random.rand() * 30, 2)
-        #pressure = round(1 + 0.1*np.random.rand(),2)
-        #humid = round(100*np.random.rand(),2)
-        #wind_v = round(np.random.rand() * 20,2)
-        #wind_d = round (np.random.rand(),2)
-        #rain = round(np.random.rand() * 10,2)
-        wind_v = "Coming soon..."
-        wind_d = "Coming soon..."
-        rain = "Coming soon..."
-        #'datetime': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), #get current time
-        datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        coords = coords
-
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
 """
 This route allows for camera streaming
 """
@@ -162,38 +134,11 @@ def video_feed():
     print("Video feed called")
     return Response(camera.gen_frames(),mimetype='multipart/x-mixed-replace;boundary=frame')
 
-
-"""
-The following thread is intended to sample the I2C sensors at a set interval. 
-The sampling should update the local values of the variables which can be accessed when a client requests them.
-"""
-<<<<<<< HEAD
-sampletime = 1
-=======
-def check_sensors(sampletime):
-    while True:
-        global temp, pressure, humid, wind_v, wind_d, rain # Make reference to global variables 
-        temp = round(np.random.rand() * 30, 2)
-        pressure = round(1 + 0.1*np.random.rand(),2)
-        humid = round(100*np.random.rand(),2)
-        wind_v = round(np.random.rand() * 20,2)
-        wind_d = round(np.random.rand(),2)
-        rain = round(np.random.rand() * 10,2)
-        sleep(sampletime)
-
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
 if __name__  == '__main__':
-<<<<<<< HEAD
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
-    
+
 camera.cap.release()
 cv2.destroyAllWindows()
-=======
-    app.run(debug=True,port=80,host='0.0.0.0') #Start listening on port 80.
-    
-camera.cap.release()
-cv2.destroyAllWindows()
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
