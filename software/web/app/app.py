@@ -95,8 +95,9 @@ def update():
         'windspeed': wind_v,
         'windvector': wind_d,
         'rainfall': rain,
-        'datetime': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        'coords:': coords
+        'timenow': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        'time_elapsed': (time() - start_time),
+        'coords': coords
     }
     return Response(json.dumps(documents_), mimetype='application/json')
 
@@ -112,8 +113,7 @@ except:
 
 def check_sensors(sampletime):
     while True:
-        print("Check sensors called")
-        global temp, pressure, humid, wind_v, wind_d, rain, coords, time # Make reference to global variables
+        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow # Make reference to global variables
         bme.read_all() # Read weather values
        	climate_vals = bme.report()
         pressure = round(climate_vals[0]/1000,3)
@@ -122,9 +122,8 @@ def check_sensors(sampletime):
         wind_v = "Coming soon..."
         wind_d = "Coming soon..."
         rain = "Coming soon..." #get current time
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        timenow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         coords = coords
-        print(climate_vals)
         sleep(sampletime)
 """
 This route allows for camera streaming
@@ -136,6 +135,8 @@ def video_feed():
 
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
+
+start_time = time()
 
 if __name__  == '__main__':
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.

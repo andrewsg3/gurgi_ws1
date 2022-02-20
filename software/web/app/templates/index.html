@@ -18,7 +18,7 @@
             </header>
 
             <div id="timebox">
-                <h3 id="datetime">Last updated: {{ time }}</h3>
+                <h3 id="timenow">Last updated: {{ time }}</h3>
             </div>
             <div id="content" class="flex-container">      
                 <div id="data-container" class="flex-item">
@@ -68,7 +68,7 @@
             </div>
 
             <div id="timebox" class="flex-container">
-                <h3 id="updates" class="flex-item">Session duration: {{ updates }} samples.</h3>
+                <h3 id="time_elapsed" class="flex-item">Session duration: {{ time }} seconds.</h3>
                 <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
             </div>
@@ -82,7 +82,6 @@
             </footer>
         </main>
     </body>
-
     <script>
         //Type as javascript
         setInterval(function () {
@@ -108,21 +107,14 @@
                 document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
                 document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
                 document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
-                document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
-                document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
+                document.getElementById('timenow').innerHTML = "Last updated: " + body.timenow
+                document.getElementById('coords').innerHTML = "GPS Coordinates: " + body.coords
+		document.getElementById('time_elapsed').innerHTML = "Session duration: " + body.time_elapsed + " seconds."
 
             });
-<<<<<<< HEAD
-        }, 1000); // Last param is time in ms, here it's set to 1s.
-=======
-        }, 2500); // Last param is time in ms, here it's set to 1s.
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
+        }, 1000); // Last param is time in ms, here it's set to 1s
 
         // Plotting with d3
         //https://www.freecodecamp.org/learn/data-visualization/data-visualization-with-d3/dynamically-change-the-height-of-each-bar
     </script>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 60e4c2c29e3a5fb25079222db2e69af90385a523
