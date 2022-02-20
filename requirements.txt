@@ -1,0 +1,4 @@
+flask==1.1.2
+flask_socketio==4.3.2
+numpy==1.21.2
+RPi.bme280==0.2.4

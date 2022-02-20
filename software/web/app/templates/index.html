@@ -2,39 +2,119 @@
     <head>
         <title>{{ title }}</title>
         <link rel="stylesheet" href="../static/assets/css/style.css">
+        <link rel="icon" href="../static/assets/img/GROUND_INFRASTRUCTURE.png">
     </head>
+
     <body>
         <main id="main">
-            <header id="header" class="header">
-                <div class="container">
-                    <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" width="50" height="50">
-                    <h1 id="title">GU Rocketry Weather Station mk1</h1>
+            <header id="header">
+                <div class="flex-container">
+                    <a href="https://www.gurocketry.com/" target="blank">
+                        <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" id="logo" class="flex-item">
+                    </a>
+                    <div id="spacer1" class="flex-item"></div>
+                    <h1 id="title" class="flex-item">GU Rocketry Weather Station</h1>
                 </div>
             </header>
 
             <div id="timebox">
-                <h2 id="datetime">Last updated: {{ time }}</h2>
+                <h3 id="datetime">Last updated: {{ time }}</h3>
             </div>
+            <div id="content" class="flex-container">      
+                <div id="data-container" class="flex-item">
+                    <div>
+                        <h1 id="data-title">Current Conditions</h1>
+                        <table id="data-table">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Temperature</td>
+                                <td id="temp" class="param">{{ temp }} &#176;C</td>
+                            </tr>
+                            <tr>
+                                <td>Pressure</td>
+                                <td id="pressure" class="param">{{ pressure }} bar</td>
+                            </tr>
+                            <tr>
+                                <td>Humidity</td>
+                                <td id="humidity" class="param">{{ humid }}%</td>
+                            </tr>
+                            <tr>
+                                <td>Windspeed</td>
+                                <td id="windspeed" class="param">{{ wind_v }} m/s</td>
+                            </tr>
+                            <tr>
+                                <td>Wind Vector</td>
+                                <td id="windvector" class="param">{{ wind_d }} &#176;</td>
+                            </tr>
+                            <tr>
+                                <td>4-Hour Rainfall</td>
+                                <td id="rainfall" class="param">{{ rain }}mm</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-            <div id="content" class="flex-container">
-                <div id="databox" class="flex-item">
-                    <h2 id="datatitle">Current conditions:</h2>
-                    <ul>
-                        <li>Temperature: {{ temp }} &#176;C</li>
-                        <li>Pressure: {{ pressure }} bar</li>
-                        <li>Humidity: {{ humid }}%</li>  
-                        <li>Wind speed: {{ wind_v }} m/s</li>
-                        <li>Wind direction: {{ wind_d }} &#176;</li>
-                        <li>4-hour Rainfall: {{ rain }} mm</li>
-                    </ul>
+                <div id="separator"> </div>
+
+                <div id="video-container" class="flex-item">
+                    <h1 id="video-title">Live Video Feed</h1>
+                    <div class="col-lg-8  offset-lg-2">
+                        <img src="{{ url_for('video_feed') }}" id = "video-pic">
+                    </div>
                 </div>
             </div>
 
+            <div id="timebox" class="flex-container">
+                <h3 id="updates" class="flex-item">Session duration: {{ updates }} samples.</h3>
+                <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
+                <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
+            </div>
 
             <footer id="footer">
-                The GUR Weather Station is a Ground Infrastructure project. For details, contact team lead James Hayes.<br>
-                Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
+                <p id="footer-text">
+                    The Mobile Weather Station is a product of the GUR Ground Infrastructure Team.<br>
+                    Contact Electronics Team lead Andrew Scott-George for usage information or to report a bug.<br>
+                    Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
+                </p>
             </footer>
         </main>
     </body>
+
+    <script>
+        //Type as javascript
+        setInterval(function () {
+            console.log("Hello"); // Log console; debug
+            
+            var opts = { // A set of parameters passed to the fetch function.
+                method: 'GET',      
+                headers: {}
+                };
+
+            //fetch function calls a path from app.py: in this case, /update.
+            fetch('/update', opts).then(function (response) { //.then takes the output of the last thing you said and uses it as the input to the next thing you say. This is called "piping"
+            // So basically we format the output of the /update path in json format?
+                return response.json();
+                })
+
+            .then(function (body) { // Here, we declare a function that takes our formatted data from /update and calls it "body"
+                console.log(body) // Print to console the contents of body for debugging purposes. To see this, go to the webapp on a browser, right click and press inspect. Then look at console.
+                document.getElementById('temp').innerHTML = body.temperature +" &#176;C" // Find elements by their ID and update them to a value taken from "body", which was the output of the fetch function.
+                document.getElementById('pressure').innerHTML = body.pressure + " bar" 
+                document.getElementById('humidity').innerHTML = body.humidity + " %" 
+                document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
+                document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
+                document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
+                document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
+                document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
+                document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
+
+            });
+        }, 1000); // Last param is time in ms, here it's set to 1s.
+
+        // Plotting with d3
+        //https://www.freecodecamp.org/learn/data-visualization/data-visualization-with-d3/dynamically-change-the-height-of-each-bar
+    </script>
 </html>

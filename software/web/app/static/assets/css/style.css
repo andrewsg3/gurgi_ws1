@@ -1,5 +1,5 @@
 html {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+    font-family: "Consolas", BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 }
 
 :root {
@@ -8,76 +8,228 @@ html {
     --blue: #221959;
     --black: #000000;
     --grey: #262526;
+    --lightblue: rgb(176,213,230);
 }
+
+
+/* Use this to determine size of flexboxes     border: 5px solid var(--yellow); */
 
 body{
     background-color: var(--grey);
-    color: var(--yellow)
+    color: var(--yellow);
+    margin: 0 0 0 0;
 }
 
-#main {
-
+/* Flex stuff */
+.flex-container{
+    display:flex;
+    flex-direction: row;
+    height: auto;
+    align-items: center;
 }
 
-.header .container {
+.flex-item{
+    margin: auto;
+}
+
+
+/* Header stuff */
+#header {
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    flex-direction: column;
-  }
-
-#header {
-    padding: 5px;
-    margin: 0 0 1vw 0;
+    flex-direction: row;
+    height: 5vh;
+    padding: 2vh 0 3vh 0;
     text-align: center;
     background-color: white;
     color: var(--grey);
 }
 
 #title {
-    align-self: center;
+    /* Any changes to title font put here */
 }
 
-#content{
-    background-color: var(--blue);
-    background-image: url("../img/space.jpeg");
-    padding: 5px;
-    margin: 0 0 1vw 0;
+#spacer1{
+    width: 2vw;
 }
 
-.flex-container{
-    display:flex;
-    height: 300px;
-    align-items: center;
+#logo {
+    width: 3vw;
+    height: auto;   
 }
-
-.flex-item{
-    width:auto;
-    height:auto;
-    margin:auto;
-}
-
 
 #timebox {
+    margin: 0 0 0 0;
+    padding: 0.5vh;
+    height: 2.5vh;
+    background-color: var(--black);
+    font-size: small;
     text-align: center;
+    color: white;
 }
 
 #datetime {
+    text-align: center;
+}
+
+
+/* Relating to the content container */
+#content{
+    background-color: var(--blue);
+    background-image: url("../img/space.jpeg");
+    height: 70vh;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+#separator {
+    height: 70vh;
+    width: 5px;
+    background-color: var(--black);
+}
+
+/* Relating to the table of weather variables */
+#data-container {
+    width: 50vw;
+    height: 60vh;
+    margin: 0;
+    display: flex;
+    justify-items: center;
+    flex-direction: column;
+}
+
+#data-title {
+    width: 20vw;
+    height: 5vh;
+    text-align: center;
+    margin: auto auto;
+}
+
+#data-table {
+    font-size: 2vw;
+    width: 40vw;
+    height: 50vh;
+    margin: 5vh auto;
+    border: 0.5vw solid rgb(0,0,0,0.5);
+}
+
+table, th, td {
+    border: 0.05vw solid;
+    border-collapse: collapse;
+    padding:  0 2.5vw;
+}
+
+td {
+    text-align: left;
+
+}
+
+th {
+    text-align: left;
+    width: 30vw;
+}
+
+.param {
+    text-shadow: 0.1vh 0.1vh rgb(255,255,255,0.1);
+    color: var(--lightblue);
+    font-weight: bold;
+    border: 0.05vw solid var(--yellow);
+}
+
+/* Relating to the video stream */
+#video-container {
+    width: 50vw;
+    height: 60vh;
+    margin: 0;
+    display: flex;
+    justify-items: center;
+    flex-direction: column;
+
+}
+
+#video-title{
+    width: 20vw;
+    height: 5vh;
+    text-align: center;
+    margin: auto auto;
+
+}
+
+#video-pic {
+    width: auto;
+    height: auto;
+    max-width: 40vw;
+    max-height: 50vh;
+    margin: 5vh 7.5vw;
+    border: 10px solid rgb(0,0,0,0.5);
+}
+
+
+
+
+/* Relating to stuff below video stream */
+#lowerbox {
+    flex-direction: row;
+    display: flex;
+    justify-items: center;
+    margin: 0 0 0 0;
+    height: 7.5vh;
+    background-color: var(--grey);
+    font-size: small;
+    text-align: center;
+}
+
+#updates{
+    margin: auto;
+    padding: auto;
+    text-align: center;
+    color: var(--white);
+}
+
+#datetime {
+    margin: auto;
+    padding: auto;
     text-align: center  ;
 }
 
-#databox{
-}
-
-#datatitle{
-
-}
-
-#datali{
-
-}
-
-#footer{
+#gps {
+    margin: auto;
+    padding: auto;
     text-align: center;
+    color: var(--white);
+}
+
+#link-button {
+    color: var(--white);
+}
+
+#link-button:hover {
+    color: var(--yellow);
+}
+
+#link-button:focus{
+    color: var(--blue);
+}
+
+/* Relating to footer */
+#footer{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    text-align: center;
+    height: auto;
+    margin: 0;
+    padding: 2.5vh;
+}
+
+#footer-text {
+    margin: auto;
 }
