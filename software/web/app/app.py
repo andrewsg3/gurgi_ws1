@@ -8,6 +8,9 @@ Main program from which webapp is run.
 ## Import libraries
 from turtle import title
 from flask import Flask, render_template, Response #Load flask module
+from flask import Flask, render_template #Load flask module
+from flask import Response
+#from flask_socketio import SocketIO, emit 
 #from flask_mongoengine import MongoEngine
 import datetime
 import numpy as np
@@ -131,17 +134,11 @@ def video_feed():
     print("Video feed called")
     return Response(camera.gen_frames(),mimetype='multipart/x-mixed-replace;boundary=frame')
 
-
-"""
-The following thread is intended to sample the I2C sensors at a set interval. 
-The sampling should update the local values of the variables which can be accessed when a client requests them.
-"""
-sampletime = 1
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
 if __name__  == '__main__':
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
-    
+
 camera.cap.release()
 cv2.destroyAllWindows()
