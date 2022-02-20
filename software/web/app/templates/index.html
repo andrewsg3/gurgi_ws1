@@ -2,74 +2,83 @@
     <head>
         <title>{{ title }}</title>
         <link rel="stylesheet" href="../static/assets/css/style.css">
+        <link rel="icon" href="../static/assets/img/GROUND_INFRASTRUCTURE.png">
     </head>
+
     <body>
         <main id="main">
             <header id="header">
                 <div class="flex-container">
-                    <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" id="logo" class="flex-item">
+                    <a href="https://www.gurocketry.com/" target="blank">
+                        <img src="../static/assets/img/GROUND_INFRASTRUCTURE.png" alt="GURGI_logo" id="logo" class="flex-item">
+                    </a>
                     <div id="spacer1" class="flex-item"></div>
-                    <h1 id="title" class="flex-item">GU Rocketry Weather Station mk1</h1>
+                    <h1 id="title" class="flex-item">GU Rocketry Weather Station</h1>
                 </div>
             </header>
 
             <div id="timebox">
                 <h3 id="datetime">Last updated: {{ time }}</h3>
             </div>
-
-            <div id="content" class="flex-container">
-                <div id="databox" class="flex-item">
-                    <h2 class="datatitle">Current conditions:</h2>
-
-                    <table>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                        </tr>
-                        <tr>
-                            <td>Temperature</td>
-                            <td id="temp">{{ temp }} &#176;C</td>
-                        </tr>
-                        <tr>
-                            <td>Pressure</td>
-                            <td id="pressure">{{ pressure }} bar</td>
-                        </tr>
-                        <tr>
-                            <td>Humidity</td>
-                            <td id="humidity">{{ humid }}%</td>
-                        </tr>
-                        <tr>
-                            <td>Windspeed</td>
-                            <td id="windspeed">{{ wind_v }} m/s</td>
-                        </tr>
-                        <tr>
-                            <td>Wind Vector</td>
-                            <td id="windvector">{{ wind_d }} &#176;</td>
-                        </tr>
-                        <tr>
-                            <td>4-Hour Rainfall</td>
-                            <td id="rainfall">{{ rain }}mm</td>
-                        </tr>
-                    </table>
+            <div id="content" class="flex-container">      
+                <div id="data-container" class="flex-item">
+                    <div>
+                        <h1 id="data-title">Current Conditions</h1>
+                        <table id="data-table">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Temperature</td>
+                                <td id="temp" class="param">{{ temp }} &#176;C</td>
+                            </tr>
+                            <tr>
+                                <td>Pressure</td>
+                                <td id="pressure" class="param">{{ pressure }} bar</td>
+                            </tr>
+                            <tr>
+                                <td>Humidity</td>
+                                <td id="humidity" class="param">{{ humid }}%</td>
+                            </tr>
+                            <tr>
+                                <td>Windspeed</td>
+                                <td id="windspeed" class="param">{{ wind_v }} m/s</td>
+                            </tr>
+                            <tr>
+                                <td>Wind Vector</td>
+                                <td id="windvector" class="param">{{ wind_d }} &#176;</td>
+                            </tr>
+                            <tr>
+                                <td>4-Hour Rainfall</td>
+                                <td id="rainfall" class="param">{{ rain }}mm</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <div id="video" class="flex-item">
-                    <h2 class="datatitle">Live Streaming</h3>
+
+                <div id="separator"> </div>
+
+                <div id="video-container" class="flex-item">
+                    <h1 id="video-title">Live Video Feed</h1>
                     <div class="col-lg-8  offset-lg-2">
-                        <img src="{{ url_for('video_feed') }}" id = "video_pic">
+                        <img src="{{ url_for('video_feed') }}" id = "video-pic">
                     </div>
                 </div>
             </div>
 
             <div id="timebox" class="flex-container">
-                <h3 id="updates" class="flex-item">Total updates since start: {{ updates }} </h3>
+                <h3 id="updates" class="flex-item">Session duration: {{ updates }} samples.</h3>
+                <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
-                <h3 id="link" class="flex-item"><a href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
             </div>
 
             <footer id="footer">
-                The Mobile Weather Station is a product of the GUR Ground Infrastructure Team.<br>
-                Contact Electronics Team lead Andrew Scott-George for usage information or to report a bug.<br>
-                Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
+                <p id="footer-text">
+                    The Mobile Weather Station is a product of the GUR Ground Infrastructure Team.<br>
+                    Contact Electronics Team lead Andrew Scott-George for usage information or to report a bug.<br>
+                    Copyright 2019-2021 by Glasgow University Rocketry. All Rights Reserved.
+                </p>
             </footer>
         </main>
     </body>
@@ -98,7 +107,7 @@
                 document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
                 document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
                 document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
-                document.getElementById('updates').innerHTML = 'Total updates since start: ' + body.updates
+                document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
                 document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
                 document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
 
