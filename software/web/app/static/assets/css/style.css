@@ -97,6 +97,7 @@ body{
 #data-container {
     width: 50vw;
     height: 60vh;
+    max-height: 50vh;
     margin: 0;
     display: flex;
     justify-items: center;
@@ -114,6 +115,7 @@ body{
     font-size: 2vw;
     width: 40vw;
     height: 50vh;
+    max-height: 40vh;
     margin: 5vh auto;
     border: 0.5vw solid rgb(0,0,0,0.5);
 }
