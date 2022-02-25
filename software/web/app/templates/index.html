@@ -73,6 +73,8 @@
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
             </div>
 
+            <button id="mybutton">Click Me</button>
+
             <footer id="footer">
                 <p id="footer-text">
                     The Mobile Weather Station is a product of the GUR Ground Infrastructure Team.<br>
@@ -82,6 +84,16 @@
             </footer>
         </main>
     </body>
+
+    <script>
+        // Test of d3 event listener
+        document.addEventListener('DOMContentLoaded',function(){
+            document.getElementById('mybutton').onclick=function(){
+                console.log("Clicked");
+            }
+        });
+    </script>
+
     <script>
         //Type as javascript
         setInterval(function () {
@@ -109,7 +121,7 @@
                 document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
                 document.getElementById('timenow').innerHTML = "Last updated: " + body.timenow
                 document.getElementById('coords').innerHTML = "GPS Coordinates: " + body.coords
-		document.getElementById('time_elapsed').innerHTML = "Session duration: " + body.time_elapsed + " seconds."
+		        document.getElementById('time_elapsed').innerHTML = "Session duration: " + body.time_elapsed + " seconds."
 
             });
         }, 1000); // Last param is time in ms, here it's set to 1s
