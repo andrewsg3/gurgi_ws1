@@ -49,6 +49,7 @@ body{
 
 #title {
     /* Any changes to title font put here */
+    font-family: "Consolas"
 }
 
 #spacer1{
@@ -87,43 +88,41 @@ body{
     flex-direction: row;
 }
 
-#separator {
-    height: 70vh;
-    width: 5px;
-    background-color: var(--black);
-}
-
 /* Relating to the table of weather variables */
 #data-container {
     width: 50vw;
-    height: 60vh;
+    height: 50vh;
     max-height: 50vh;
-    margin: 0;
+    margin: auto;
     display: flex;
     justify-items: center;
     flex-direction: column;
 }
 
 #data-title {
-    width: 20vw;
+    width: 25vw;
     height: 5vh;
     text-align: center;
     margin: auto auto;
 }
 
 #data-table {
-    font-size: 2vw;
+    font-size: 1.5vw;
     width: 40vw;
     height: 50vh;
-    max-height: 40vh;
-    margin: 5vh auto;
-    border: 0.5vw solid rgb(0,0,0,0.5);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 20vh;
+    border: 0.5vw solid --yellow;
 }
 
 table, th, td {
     border: 0.05vw solid;
     border-collapse: collapse;
     padding:  0 2.5vw;
+    margin-top: 0;
+    margin-bottom: 20vh;
 }
 
 td {
@@ -146,8 +145,9 @@ th {
 /* Relating to the video stream */
 #video-container {
     width: 50vw;
-    height: 60vh;
-    margin: 0;
+    height: 50.5vh;
+    position: relative;
+    margin: auto ;
     display: flex;
     justify-items: center;
     flex-direction: column;
@@ -157,7 +157,6 @@ th {
 #video-title{
     width: 20vw;
     height: 5vh;
-    text-align: center;
     margin: auto auto;
 
 }
@@ -167,8 +166,8 @@ th {
     height: auto;
     max-width: 40vw;
     max-height: 50vh;
-    margin: 5vh 7.5vw;
-    border: 10px solid rgb(0,0,0,0.5);
+    margin: 0vh 7.5vw;
+    border: 1.5px solid var(--yellow);
 }
 
 
@@ -194,7 +193,7 @@ th {
 }
 
 #datetime {
-    margin: auto;
+    margin: 0;
     padding: auto;
     text-align: center  ;
 }
@@ -233,5 +232,5 @@ th {
 }
 
 #footer-text {
-    margin: auto;
+    margin: 0;
 }
