@@ -3,7 +3,7 @@ Should be connected via RJ11.
 """
 #https://www.argentdata.com/files/80422_datasheet.pdf 
 import time
-#from gpiozero import Button
+from gpiozero import Button
 
 class raingauge():
     """Class for interacting with rain gauge"""
@@ -11,8 +11,8 @@ class raingauge():
         #Interfacing
         self.gpiopin = 6 # Gpio pin
         self.tipsize = 0.2794 # Amount of rain that will tip bucket
-        #self.rain_sensor = Button(self.gpiopin)
-        #self.rain_sensor.when_pressed = self.tipped
+        self.rain_sensor = Button(self.gpiopin)
+        self.rain_sensor.when_pressed = self.tipped
         self.sampletime = 5
 
         #Reading
@@ -31,7 +31,7 @@ class raingauge():
     def one_minute(self):
         """Takes measurements for one minute and stores them"""
         start_time = time.time()
-        while time.time() - start_time <= 60:
+        while time.time() - start_time <= 5:
             self.reset_rainfall()
             time.sleep(self.sampletime)
             self.calculate_rain()

@@ -1,6 +1,6 @@
 """Contains class for windspeed anemometer
 """
-#from gpiozero import Button #Won't work unless on raspbi
+from gpiozero import Button #Won't work unless on raspbi
 import math
 import statistics
 import time
@@ -12,8 +12,8 @@ class windspeed_sensor():
     # Electornic interface values
         self.sampletime = 5 # sample time in s  
         self.gpio_pin = 5
-#        self.windsensor = Button(self.gpio_pin) #Windsensor is a Button class from gpiozero library
-#        self.windsensor.when_pressed = self.spin # When the button is pressed, call the spin function to update wind count
+        self.windsensor = Button(self.gpio_pin) #Windsensor is a Button class from gpiozero library
+        self.windsensor.when_pressed = self.spin # When the button is pressed, call the spin function to update wind count
 
         # Anemometer values
         self.radius = 0.09 # radius in m
@@ -48,7 +48,7 @@ class windspeed_sensor():
     def one_minute(self):
         """Takes measurements for one minute and stores them"""
         start_time = time.time()
-        while time.time() - start_time <= 60:
+        while time.time() - start_time <= 5:
             self.reset_wind()
             time.sleep(self.sampletime)
             self.calculate_speed()
@@ -56,7 +56,7 @@ class windspeed_sensor():
 
         wind_gust = max(self.stored_speeds)
         wind_speed = statistics.mean(self.stored_speeds)
-        print(wind_speed,wind_gust)
+        print(f"Latest speed: {round(wind_speed,2)}m/s \nMax speed: {round(wind_gust,2)}m/s")
 
     def report(self):
         """Report on last sampled values, stored as member variables"""
@@ -65,3 +65,5 @@ class windspeed_sensor():
     def test_vals(self):
         """Add some arbitrary test values to test other functions"""
         self.v = 4.81
+
+   
