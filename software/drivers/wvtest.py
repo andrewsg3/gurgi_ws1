@@ -7,6 +7,6 @@ while True:
 	if not wind in values:
 		values.append(wind)
 		count+=1
-		print(count)
+		print(f"New count: {count} Latest value: {wind}")
 	if len(values) >= 15:
 		print(values)
