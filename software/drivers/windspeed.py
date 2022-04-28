@@ -5,7 +5,7 @@ import math
 import statistics
 import time
 
-class windspeed_sensor():
+class anemo():
     """Class containing windspeed anemometer functionality
     """
     def __init__(self):
@@ -22,21 +22,35 @@ class windspeed_sensor():
 
         # Last values
         self.wind_count = 0 #number of counts 
-        self.v = 0 #wind speed
-        self.stored_speeds = []
+       	self.v = 0 #wind speed
+        self.spins = [0]
+        self.stored_times = [time.time()]
+        self.stored_speeds = [None]
 
     def spin(self):
         """Callback (?) for when "button" is pressed
         """
         self.wind_count = self.wind_count + 1
+        self.stored_times.append(time.time())
+        self.spins.append(self.wind_count)
+        speed = self.calculate_speed2()
+        self.stored_speeds.append(speed)
 
-    def calculate_speed(self):
+    def calculate_speed2(self):
+        """Calculate windspeed based on saevd times, spins etc"""
+        i = len(self.spins)
+        latest_spins = self.spins[i-1] - self.spins[i-2]
+        latest_time = self.stored_times[i-1] - self.stored_times[i-2]
+        speed = round(self.calculate_speed(latest_spins, latest_time),2)
+        return speed
+
+    def calculate_speed(self, wind_count, sampletime):
         """Calculate windspeed based on anem geometry and number of ticks in sample period
         Should get called at end of sample period
         """
-        rotations = self.wind_count / 2 # True rotations is half the counted pulses from button
+        rotations = wind_count / 2 # True rotations is half the counted pulses from button
         dist = self.c * rotations
-        speed = dist / self.sampletime
+        speed = dist / sampletime
         speed = speed * self.adjustment # Perform correction on speed
         self.v = speed # Update speed
         self.reset_wind

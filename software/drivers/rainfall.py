@@ -43,7 +43,8 @@ class raingauge():
 
     def report(self):
         """Report on current value"""
-        return self.rain
+        self.calculate_rain()
+	return self.rain
 
     def test_vals(self):
         """Add some test vals"""

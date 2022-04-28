@@ -11,60 +11,72 @@ import numpy as np
 class windvane():
     """Windvane class
     """
-    def __init__(self, r1=1450, vin=3.3):
-        # Interfacing
-        self.channel = 0 # Channel of ADC from which to read voltage 
-        self.adc = MCP3008(channel = self.channel)
-        self.r1 = r1 # The resistor used in the system
-        self.vin = float(vin) #input voltage
+	def __init__(self, r1=1450, vin=3.3):
+		# Interfacing
+		self.channel = 0 # Channel of ADC from which to read voltage 
+		self.adc = MCP3008(channel = self.channel)
+		self.r1 = r1 # The resistor used in the system
+		self.vin = float(vin) #input voltage
 
-        # Readings
-        self.sampletime = 5
+		# Readings
+		self.sampletime = 5
 
-	self.resistances = [33000, 6570, 8200, 891, 1000, 688, 2200, 1410, 3900, 3140, 16000,
-	14120, 120000, 42120, 64900, 21880]
+		self.resistances = [33000, 6570, 8200, 891, 1000, 688, 2200, 1410, 3900, 3140, 16000, 14120, 120000, 42120, 64900, 21880]
 
-	self.angles = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 
-	270, 292.5, 315, 337.5]
+		self.angles = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]
 
-	self.voltages = np.zeros(len(self.angles))
+		self.vpercent = [0.831, 0.429, 0.487, 0.089, 0.097, 0.069, 0.195, 0.134, 0.303, 0.358, 0.667, 0.634, 1, 0.874, 0.937, 0.742]
 
-	for i in range(len(self.resistances)):
-		self.voltages[i] = round((self.vin * self.resistances[i]) / (self.r1 + self.resistances[i]), 1)
+		self.voltages = np.zeros(len(self.angles))
 
-        self.volts = dict(zip(self.voltages, self.angles)) # Reference array for relating a read volage to an angle
+		for i in range(len(self.resistances)):
+			self.voltages[i] = round((self.vin * self.resistances[i]) / (self.r1 + self.resistances[i]), 1)
 
-        self.voltage = 0 # Last voltage read from ADC
-        self.d = 0 # Last angle calculated from ADC voltage
-        self.angles = [] # stored angles
-    
-    def read(self):
-        """Read voltage from ADC and make correction / rounding
-        """
-        self.voltage = round(self.adc.value*3.3, 1)
-        #self.lookup_angle()
+		self.volts = dict(zip(self.voltages, self.angles)) # Reference array for relating a read volage to an angle
 
-    def lookup_angle(self):
-        """Compare ADC input to lookup table and corresponding angle
-        """
-        if not self.voltage in self.volts:
-            print("Unknown value of voltage from windvane. Check resistor configuration.\nMeasured voltage: " + str(self.voltage))
-        else:
-            print("Matched voltage: " + str(self.voltage) + "to table value: " + str(self.volts[self.voltage]))
-            self.d = self.volts[self.voltage] # Update angle in deg
+		self.voltage = 0 # Last voltage read from ADC
+		self.d = 0 # Last angle calculated from ADC voltage
+		self.angles = [] # stored angles
 
-    def one_minute(self):
-       	    """sample for one minute and print"""
-	    start_time = time.time()
-            record = []
-	    print("Sampling windvane for 60 seconds")
-	    while time.time() - start_time <= 20:
-		    self.read()
-		    record.append(self.voltage)	    
-		    time.sleep(0.005)
-	    print(record)
-	    print(set(record))
-	    print(len(set(record)))
+	def read(self):
+		"""Read voltage from ADC and make correction / rounding"""
+		self.voltage = round(self.adc.value*3.3, 1)
+		#self.lookup_angle()
+
+	def lookup_angle(self):
+		"""Compare ADC input to lookup table and corresponding angle
+		"""
+		if not self.voltage in self.volts:
+			print("Unknown value of voltage from windvane. Check resistor configuration.\nMeasured voltage: " + str(self.voltage))
+		else:
+			print("Matched voltage: " + str(self.voltage) + "to table value: " + str(self.volts[self.voltage]))
+		self.d = self.volts[self.voltage] # Update angle in deg
+
+	def one_minute(self):
+		"""sample for one minute and print"""
+		start_time = time.time()
+		record = []
+		print("Sampling windvane for 60 seconds")
+		while time.time() - start_time <= 20:
+		self.read()
+		record.append(self.voltage)	    
+		time.sleep(0.005)
+		print(record)
+		print(set(record))
+		print(len(set(record)))
+
+    def setup(self):
+            """Sample for 10 seconds to obtain max voltage"""
+        start_time = time.time()
+        record = []
+            print("Setting up windvane. Please spin for 10 seconds.")
+            while time.time() - start_time <= 10:
+                     self.read()
+                     record.append[self.voltage]
+                     time.sleep(0.001)
+            print(record)
+            print(f"Max in record = {max(record)}")
+            self.voltages = self.vpercent * max(record)
 
     def sample(self):
         """Function to sample over some period and average

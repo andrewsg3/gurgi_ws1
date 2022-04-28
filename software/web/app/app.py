@@ -8,23 +8,27 @@ Main program from which webapp is run.
 ## Import libraries
 from turtle import title
 from flask import Flask, render_template, Response #Load flask module
-from flask import Flask, render_template #Load flask module
-from flask import Response
-#from flask_socketio import SocketIO, emit 
-#from flask_mongoengine import MongoEngine
 import datetime
 import numpy as np
 import sys
 import threading
 import random
 import json
-from time import time
-from time import sleep
+from time import time, sleep
 from flask import make_response
 try:
     import climate
 except:
     print("Climate could not be imported.")
+try:
+    import rainfall
+except:
+    print("Rainfall could not be imported.")
+try:
+    import windspeed
+except:
+    print("Windspeed couldn not be imported.")
+
 import camera
 
 ## Set params
@@ -108,7 +112,17 @@ The sampling should update the local values of the variables which can be access
 try:    
     bme = climate.climate_sensor()
 except:
-    print("Climate sensor could not be instantiated.")
+    print("BME280 could not be instantiated.")
+
+try:
+    raingauge = rainfall.raingauge()
+except:
+    print("Rain gauge could not be instantiated.")
+
+try:
+    anemo = windspeed.anemo()
+except:
+    print("Anemometer couldn not be instantiated.")
 
 def check_sensors(sampletime):
     while True:
@@ -119,9 +133,9 @@ def check_sensors(sampletime):
         pressure = round(climate_vals[0]/1000,3)
         humid = round(climate_vals[1],3)
         temp = round(climate_vals[2],3)
-        wind_v = "Coming soon..."
+        wind_v = anemo.report()
         wind_d = "Coming soon..."
-        rain = "Coming soon..." #get current time
+        rain = raingauge.report()
         time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         coords = coords
         print(climate_vals)
