@@ -17,23 +17,25 @@ import json
 import time
 from flask import make_response
 try:
-    import climate
+    import drivers.climate as climate
 except:
     print("BME280 driver could not be imported.")
 try:
-    import rainfall
+    import drivers.rainfall as rainfall
 except:
     print("Rainfall driver could not be imported.")
 try:
-    import windspeed
+    import drivers.windspeed as windspeed
 except:
     print("Windspeed driver could not be imported.")
 try:
-    import windv
+    import drivers.windv as windv
 except:
     print("Wind direction driver could not be imported.")
-
-import camera
+try:
+    import drivers.camera as camera
+except:
+    print("Camera driver could not be imported.")
 
 ## Set params
 sampletime = 0.1 # 2 seconds sample rate for sensors
@@ -138,7 +140,6 @@ except:
 
 def check_sensors(sampletime):
     while True:
-        print("Check sensors called")
         global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration # Make reference to global variables
        	climate_vals = bme.report() # Read BME values
         pressure = round(climate_vals[0]/1000,3)
@@ -151,8 +152,8 @@ def check_sensors(sampletime):
         session_duration = str(datetime.timedelta(seconds=int(t - session_start)))
         timenow = time.strftime("%Y-%m-%d %H:%M", time.gmtime(t)),
         coords = coords
-        print(climate_vals)
         time.sleep(sampletime)
+
 """
 This route allows for camera streaming
 """
