@@ -1,5 +1,7 @@
 # GUR | Ground Infrastructure | Weather Station Mk.1 <img src ="https://user-images.githubusercontent.com/77739968/148395312-861d6199-237d-4511-8b94-009211b821c4.png" width = "30" height = "30">
 
+![GUR  backdrop](https://user-images.githubusercontent.com/77739968/169646435-9721d536-6144-4bfd-a4e0-c6db4bedffcf.png)
+
 This repo contains all code necessary to run the GURGI Weather Station Mk. 1.
 <br>
 The weather station is designed to measure a variety of environmental variables and present them via a LAN webapp. 
