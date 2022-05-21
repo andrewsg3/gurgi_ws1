@@ -68,7 +68,7 @@
             </div>
 
             <div id="timebox" class="flex-container">
-                <h3 id="updates" class="flex-item">Session duration: {{ updates }} samples.</h3>
+                <h3 id="updates" class="flex-item">Session duration: {{ session_duration }}s, {{ updates }} samples.</h3>
                 <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
             </div>
@@ -107,7 +107,7 @@
                 document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
                 document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
                 document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
-                document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
+                document.getElementById('updates').innerHTML = "Session duration: "+ body.session_duration + "s, " + body.updates + " samples."
                 document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
                 document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
 

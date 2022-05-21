@@ -23,6 +23,7 @@ class climate_sensor():
 
 	def report(self):
 		"""Report on last sampled values, stored as """
+		self.read_all()
 		return self.p, self.h, self.t
 
 	def read_all(self):

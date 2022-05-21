@@ -14,20 +14,24 @@ import sys
 import threading
 import random
 import json
-from time import time, sleep
+import time
 from flask import make_response
 try:
     import climate
 except:
-    print("Climate could not be imported.")
+    print("BME280 driver could not be imported.")
 try:
     import rainfall
 except:
-    print("Rainfall could not be imported.")
+    print("Rainfall driver could not be imported.")
 try:
     import windspeed
 except:
-    print("Windspeed couldn not be imported.")
+    print("Windspeed driver could not be imported.")
+try:
+    import windv
+except:
+    print("Wind direction driver could not be imported.")
 
 import camera
 
@@ -55,6 +59,7 @@ wind_d = "Initializing..."
 rain = "Initializing..."
 coords = "Initializing..."
 updates = 0
+session_duration = 0
 
 """
 Route: '/'
@@ -77,7 +82,8 @@ def index(): #Index function; when someone accesses root directory ("/") of flas
         'wind_v' : wind_v,
         'wind_d' : wind_d,
         'rain' : rain,
-        'coords' : coords
+        'coords' : coords,
+	'session_duration' : session_duration
         }
     return render_template('index.html', **templateData)
 
@@ -89,10 +95,11 @@ This route is used to update the variables as seen by the client. It is called b
 @app.route('/update', methods=["GET","POST"])
 def update():
     print("Updated data")
-    global updates, temp, pressure, humid, wind_v, wind_d, rain, coords
+    global updates, temp, pressure, humid, wind_v, wind_d, rain, coords, session_duration
     updates += 1
     documents_ = {
         'updates': updates,
+	'session_duration' : session_duration,
         'temperature': temp,
         'pressure': pressure,
         'humidity': humid,
@@ -117,29 +124,35 @@ except:
 try:
     raingauge = rainfall.raingauge()
 except:
-    print("Rain gauge could not be instantiated.")
+    print("Raingauge could not be instantiated.")
 
 try:
     anemo = windspeed.anemo()
 except:
-    print("Anemometer couldn not be instantiated.")
+    print("Anemometer could not be instantiated.")
+
+try:
+    windvane = windv.windvane(r1=4940, decimals=1)
+except:
+    print("Windvane could not be instantiated.")
 
 def check_sensors(sampletime):
     while True:
         print("Check sensors called")
-        global temp, pressure, humid, wind_v, wind_d, rain, coords, time # Make reference to global variables
-        bme.read_all() # Read weather values
-       	climate_vals = bme.report()
+        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration # Make reference to global variables
+       	climate_vals = bme.report() # Read BME values
         pressure = round(climate_vals[0]/1000,3)
         humid = round(climate_vals[1],3)
         temp = round(climate_vals[2],3)
         wind_v = anemo.report()
-        wind_d = "Coming soon..."
+        wind_d = windvane.report()
         rain = raingauge.report()
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        t = time.time()
+        session_duration = str(datetime.timedelta(seconds=int(t - session_start)))
+        timenow = time.strftime("%Y-%m-%d %H:%M", time.gmtime(t)),
         coords = coords
         print(climate_vals)
-        sleep(sampletime)
+        time.sleep(sampletime)
 """
 This route allows for camera streaming
 """
@@ -151,6 +164,8 @@ def video_feed():
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
+session_start = time.time()
+print(session_start)
 if __name__  == '__main__':
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
 
