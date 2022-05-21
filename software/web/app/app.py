@@ -8,24 +8,34 @@ Main program from which webapp is run.
 ## Import libraries
 from turtle import title
 from flask import Flask, render_template, Response #Load flask module
-from flask import Flask, render_template #Load flask module
-from flask import Response
-#from flask_socketio import SocketIO, emit 
-#from flask_mongoengine import MongoEngine
 import datetime
 import numpy as np
 import sys
 import threading
 import random
 import json
-from time import time
-from time import sleep
+import time
 from flask import make_response
 try:
-    import climate
+    import drivers.climate as climate
 except:
-    print("Climate could not be imported.")
-import camera
+    print("BME280 driver could not be imported.")
+try:
+    import drivers.rainfall as rainfall
+except:
+    print("Rainfall driver could not be imported.")
+try:
+    import drivers.windspeed as windspeed
+except:
+    print("Windspeed driver could not be imported.")
+try:
+    import drivers.windv as windv
+except:
+    print("Wind direction driver could not be imported.")
+try:
+    import drivers.camera as camera
+except:
+    print("Camera driver could not be imported.")
 
 ## Set params
 sampletime = 0.1 # 2 seconds sample rate for sensors
@@ -51,6 +61,7 @@ wind_d = "Initializing..."
 rain = "Initializing..."
 coords = "Initializing..."
 updates = 0
+session_duration = 0
 
 """
 Route: '/'
@@ -73,7 +84,8 @@ def index(): #Index function; when someone accesses root directory ("/") of flas
         'wind_v' : wind_v,
         'wind_d' : wind_d,
         'rain' : rain,
-        'coords' : coords
+        'coords' : coords,
+	'session_duration' : session_duration
         }
     return render_template('index.html', **templateData)
 
@@ -85,10 +97,11 @@ This route is used to update the variables as seen by the client. It is called b
 @app.route('/update', methods=["GET","POST"])
 def update():
     print("Updated data")
-    global updates, temp, pressure, humid, wind_v, wind_d, rain, coords
+    global updates, temp, pressure, humid, wind_v, wind_d, rain, coords, session_duration
     updates += 1
     documents_ = {
         'updates': updates,
+	'session_duration' : session_duration,
         'temperature': temp,
         'pressure': pressure,
         'humidity': humid,
@@ -109,10 +122,41 @@ The sampling should update the local values of the variables which can be access
 try:    
     bme = climate.climate_sensor()
 except:
-    print("Climate sensor could not be instantiated.")
+    print("BME280 could not be instantiated.")
+
+try:
+    raingauge = rainfall.raingauge()
+except:
+    print("Raingauge could not be instantiated.")
+
+try:
+    anemo = windspeed.anemo()
+except:
+    print("Anemometer could not be instantiated.")
+
+try:
+    windvane = windv.windvane(r1=4940, decimals=1)
+except:
+    print("Windvane could not be instantiated.")
 
 def check_sensors(sampletime):
     while True:
+<<<<<<< HEAD
+        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration # Make reference to global variables
+       	climate_vals = bme.report() # Read BME values
+        pressure = round(climate_vals[0]/1000,3)
+        humid = round(climate_vals[1],3)
+        temp = round(climate_vals[2],3)
+        wind_v = anemo.report()
+        wind_d = windvane.report()
+        rain = raingauge.report()
+        t = time.time()
+        session_duration = str(datetime.timedelta(seconds=int(t - session_start)))
+        timenow = time.strftime("%Y-%m-%d %H:%M", time.gmtime(t)),
+        coords = coords
+        time.sleep(sampletime)
+
+=======
         global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow # Make reference to global variables
         bme.read_all() # Read weather values
        	climate_vals = bme.report()
@@ -125,6 +169,7 @@ def check_sensors(sampletime):
         timenow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         coords = coords
         sleep(sampletime)
+>>>>>>> main
 """
 This route allows for camera streaming
 """
@@ -136,8 +181,13 @@ def video_feed():
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
+<<<<<<< HEAD
+session_start = time.time()
+print(session_start)
+=======
 start_time = time()
 
+>>>>>>> main
 if __name__  == '__main__':
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
 

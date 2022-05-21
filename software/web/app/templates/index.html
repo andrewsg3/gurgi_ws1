@@ -20,8 +20,8 @@
             <div id="timebox">
                 <h3 id="timenow">Last updated: {{ time }}</h3>
             </div>
-            <div id="content" class="flex-container">      
-                <div id="data-container" class="flex-item">
+            <div id="content" class="">      
+                <div id="data-container" class=""> <!-- formerly had class flex-item -->
                     <div>
                         <h1 id="data-title">Current Conditions</h1>
                         <table id="data-table">
@@ -42,24 +42,24 @@
                                 <td id="humidity" class="param">{{ humid }}%</td>
                             </tr>
                             <tr>
-                                <td>Windspeed</td>
+                                <td>Wind Speed</td>
                                 <td id="windspeed" class="param">{{ wind_v }} m/s</td>
                             </tr>
                             <tr>
-                                <td>Wind Vector</td>
+                                <td>Wind Direction</td>
                                 <td id="windvector" class="param">{{ wind_d }} &#176;</td>
                             </tr>
                             <tr>
-                                <td>4-Hour Rainfall</td>
+                                <td>Total Rainfall</td>
                                 <td id="rainfall" class="param">{{ rain }}mm</td>
                             </tr>
                         </table>
                     </div>
                 </div>
 
-                <div id="separator"> </div>
+                <div id="separator"></div>
 
-                <div id="video-container" class="flex-item">
+                <div id="video-container" class=""> <!-- formerly had class flex-item -->
                     <h1 id="video-title">Live Video Feed</h1>
                     <div class="col-lg-8  offset-lg-2">
                         <img src="{{ url_for('video_feed') }}" id = "video-pic">
@@ -68,7 +68,11 @@
             </div>
 
             <div id="timebox" class="flex-container">
+<<<<<<< HEAD
+                <h3 id="updates" class="flex-item">Session duration: {{ session_duration }}s, {{ updates }} samples.</h3>
+=======
                 <h3 id="time_elapsed" class="flex-item">Session duration: {{ time }} seconds.</h3>
+>>>>>>> main
                 <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
             </div>
@@ -118,6 +122,15 @@
                 document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
                 document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
                 document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
+<<<<<<< HEAD
+                document.getElementById('updates').innerHTML = "Session duration: "+ body.session_duration + "s, " + body.updates + " samples."
+                document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
+                document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
+
+            });
+        }, 1000); // Last param is time in ms, here it's set to 1s
+        </script>
+=======
                 document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
                 document.getElementById('timenow').innerHTML = "Last updated: " + body.timenow
                 document.getElementById('coords').innerHTML = "GPS Coordinates: " + body.coords
@@ -129,4 +142,5 @@
         // Plotting with d3
         //https://www.freecodecamp.org/learn/data-visualization/data-visualization-with-d3/dynamically-change-the-height-of-each-bar
     </script>
+>>>>>>> main
 </html>
