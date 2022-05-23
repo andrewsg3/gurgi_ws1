@@ -9,13 +9,17 @@ Main program from which webapp is run.
 from turtle import title
 from flask import Flask, render_template, Response #Load flask module
 import datetime
+from matplotlib.pyplot import table
 import numpy as np
 import sys
 import threading
 import random
 import json
 import time
+import psycopg2
 from flask import make_response
+
+print("### INITIALIZING SENSOR DRIVERS ###")
 try:
     import drivers.climate as climate
 except:
@@ -37,19 +41,72 @@ try:
 except:
     print("Camera driver could not be imported.")
 
+#print("\n\n")
+
 ## Set params
 sampletime = 0.1 # 2 seconds sample rate for sensors
 
 ## Initialize things
 app = Flask(__name__) # Instantiate Flask app object
+print("Flask app initialized.")
 #app.config.from_object('app.config') #Address for app config file, config.py
 #from app.NAME.views import NAME_bp # Blueprints allow for different sections of webapp to be defined in different files and imported.
 #app.register_blueprint(NAME_bp) # Register blueprints
+print("\n\n")
 
-#db = MongoEngine() # Instantiate mongo DB
+## Connect to psql database
+print("### DATABASE INITIALIZING ###")
+dbname = "gurgibase" # The name of an existing database
+username = "postgres"
+mypass = "pass"
+init_date = datetime.datetime.now().strftime(f"%Y_%m_%d_%Hh%Mm%Ss")
+tablename = f"Session_{init_date}"
+print("Connecting to SQL database...")
+try:
+    conn = psycopg2.connect( # Connect to database
+        host="localhost",
+        database=dbname,
+        user=username,
+        password=mypass,
+    )
+    print("Connected!")
+except:
+    print(f"ERROR! Could not connect to database '{dbname}'. Speak to a system admin. Exiting program...")
+    raise SystemExit(0)
 
-#db.init_app(app) # Bind mongo DB to flask app
+cur=conn.cursor() # Create a cursor
+print("Testing an execute statement...")
+cur.execute("SELECT version()")
+print("Success. Cursor object is working correctly.")
+print(f'PostgreSQL database version: {cur.fetchone()} ') 
 
+cols = ["epoch", "date", "time", "pressure", "humidity", "temperature", "wind_speed", "rain", "wind_direction"]
+datatype = ["FLOAT", "VARCHAR(30)", "VARCHAR(30)", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT"]
+
+def create_table(tablename,cols, datatype):
+    global conn, cur
+    statement = f"CREATE TABLE {tablename}("
+    i = 0
+    while i < len(cols):
+        statement += f"{cols[i]} {datatype[i]}"
+        if i < len(cols)-1:
+            statement +=", "
+        i+=1
+    statement += ");"
+    print(statement)
+    cur.execute(statement)
+    conn.commit()
+
+create_table(tablename, cols, datatype)
+print(f"Table {tablename} created.")
+
+def insert(tablename, cur, conn, res):
+    statement = f"INSERT INTO {tablename}(epoch, date, time, pressure, humidity, temperature, wind_speed, rain, wind_direction) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);" # 
+    statement = cur.mogrify(statement, res)
+    cur.execute(statement)
+    conn.commit()
+
+print("\n\n")
 
 ## Set initial variables
 title = 'GUR Weather Station'
@@ -141,35 +198,26 @@ except:
 
 def check_sensors(sampletime):
     while True:
-<<<<<<< HEAD
-        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration # Make reference to global variables
-       	climate_vals = bme.report() # Read BME values
+        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration, cur, conn, tablename # Make reference to global variables
+        climate_vals = bme.report() # Read BME values
         pressure = round(climate_vals[0]/1000,3)
         humid = round(climate_vals[1],3)
         temp = round(climate_vals[2],3)
         wind_v = anemo.report()
         wind_d = windvane.report()
         rain = raingauge.report()
-        t = time.time()
+        t_datetime = datetime.datetime()
+        t = t_datetime.timestamp()
         session_duration = str(datetime.timedelta(seconds=int(t - session_start)))
         timenow = time.strftime("%Y-%m-%d %H:%M", time.gmtime(t)),
         coords = coords
+
+        ## Insert into database
+        #true_time, date, time, pressure, humidity, temperature, wind_speed, rain_tips, wind_direction
+        res = [t, t_datetime.strftime("%Y-%m-%d"), t_datetime.strftime("%H:%M:%S"), pressure, humid, temp, wind_v, rain, wind_d]
+        insert(tablename, cur, conn, res)
         time.sleep(sampletime)
 
-=======
-        global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow # Make reference to global variables
-        bme.read_all() # Read weather values
-       	climate_vals = bme.report()
-        pressure = round(climate_vals[0]/1000,3)
-        humid = round(climate_vals[1],3)
-        temp = round(climate_vals[2],3)
-        wind_v = "Coming soon..."
-        wind_d = "Coming soon..."
-        rain = "Coming soon..." #get current time
-        timenow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        coords = coords
-        sleep(sampletime)
->>>>>>> main
 """
 This route allows for camera streaming
 """
@@ -181,13 +229,7 @@ def video_feed():
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
-<<<<<<< HEAD
 session_start = time.time()
-print(session_start)
-=======
-start_time = time()
-
->>>>>>> main
 if __name__  == '__main__':
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
 
