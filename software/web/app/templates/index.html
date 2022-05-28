@@ -68,11 +68,7 @@
             </div>
 
             <div id="timebox" class="flex-container">
-<<<<<<< HEAD
                 <h3 id="updates" class="flex-item">Session duration: {{ session_duration }}s, {{ updates }} samples.</h3>
-=======
-                <h3 id="time_elapsed" class="flex-item">Session duration: {{ time }} seconds.</h3>
->>>>>>> main
                 <h3 id="link" class="flex-item"><a id="link-button" href="https://github.com/andrewsg3/gurgi_ws1" target="blank">Link to GitHub</a></h3>
                 <h3 id="gps" class="flex-item">GPS Coordinates: {{ coords }}</h3>
             </div>
@@ -89,7 +85,7 @@
     <script>
         //Type as javascript
         setInterval(function () {
-            console.log("Hello"); // Log console; debug
+            console.log("Making API call to weather station"); // Log console; debug
             
             var opts = { // A set of parameters passed to the fetch function.
                 method: 'GET',      
@@ -97,7 +93,7 @@
                 };
 
             //fetch function calls a path from app.py: in this case, /update.
-            fetch('/update', opts).then(function (response) { //.then takes the output of the last thing you said and uses it as the input to the next thing you say. This is called "piping"
+            fetch('/update_sql', opts).then(function (response) { //.then takes the output of the last thing you said and uses it as the input to the next thing you say. This is called "piping"
             // So basically we format the output of the /update path in json format?
                 return response.json();
                 })
@@ -110,25 +106,13 @@
                 document.getElementById('windspeed').innerHTML = body.windspeed + " m/s" 
                 document.getElementById('windvector').innerHTML = body.windvector + " &#176;"
                 document.getElementById('rainfall').innerHTML = body.rainfall + " mm"; 
-<<<<<<< HEAD
                 document.getElementById('updates').innerHTML = "Session duration: "+ body.session_duration + "s, " + body.updates + " samples."
                 document.getElementById('datetime').innerHTML = 'Last updated: ' + body.datetime,
                 document.getElemetnyById('coords').innerHTML = 'GPS Coordinates: ' + body.coords
 
             });
         }, 1000); // Last param is time in ms, here it's set to 1s
-        </script>
-=======
-                document.getElementById('updates').innerHTML = "Session duration: "+ body.updates + " samples."
-                document.getElementById('timenow').innerHTML = "Last updated: " + body.timenow
-                document.getElementById('coords').innerHTML = "GPS Coordinates: " + body.coords
-		document.getElementById('time_elapsed').innerHTML = "Session duration: " + body.time_elapsed + " seconds."
-
-            });
-        }, 1000); // Last param is time in ms, here it's set to 1s
-
         // Plotting with d3
         //https://www.freecodecamp.org/learn/data-visualization/data-visualization-with-d3/dynamically-change-the-height-of-each-bar
     </script>
->>>>>>> main
 </html>

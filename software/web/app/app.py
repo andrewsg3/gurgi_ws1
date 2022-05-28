@@ -9,7 +9,6 @@ Main program from which webapp is run.
 from turtle import title
 from flask import Flask, render_template, Response #Load flask module
 import datetime
-from matplotlib.pyplot import table
 import numpy as np
 import sys
 import threading
@@ -20,31 +19,42 @@ import psycopg2
 from flask import make_response
 
 print("### INITIALIZING SENSOR DRIVERS ###")
+cam=False
+cli=True
+rai=False
+wis=False
+wid=True
 try:
     import drivers.climate as climate
 except:
     print("BME280 driver could not be imported.")
+    cli=False
 try:
     import drivers.rainfall as rainfall
 except:
     print("Rainfall driver could not be imported.")
+    rai=False
 try:
     import drivers.windspeed as windspeed
 except:
     print("Windspeed driver could not be imported.")
+    wis=False
 try:
     import drivers.windv as windv
 except:
     print("Wind direction driver could not be imported.")
+    wid=False
 try:
     import drivers.camera as camera
 except:
     print("Camera driver could not be imported.")
+    cam=False
 
 #print("\n\n")
 
 ## Set params
 sampletime = 0.1 # 2 seconds sample rate for sensors
+rolling_average = 0.5 # Rolling average in minutes
 
 ## Initialize things
 app = Flask(__name__) # Instantiate Flask app object
@@ -57,8 +67,8 @@ print("\n\n")
 ## Connect to psql database
 print("### DATABASE INITIALIZING ###")
 dbname = "gurgibase" # The name of an existing database
-username = "postgres"
-mypass = "pass"
+username = "gurgi"
+mypass = "rocket"
 init_date = datetime.datetime.now().strftime(f"%Y_%m_%d_%Hh%Mm%Ss")
 tablename = f"Session_{init_date}"
 print("Connecting to SQL database...")
@@ -75,6 +85,7 @@ except:
     raise SystemExit(0)
 
 cur=conn.cursor() # Create a cursor
+user_cur = conn.cursor()
 print("Testing an execute statement...")
 cur.execute("SELECT version()")
 print("Success. Cursor object is working correctly.")
@@ -105,6 +116,20 @@ def insert(tablename, cur, conn, res):
     statement = cur.mogrify(statement, res)
     cur.execute(statement)
     conn.commit()
+
+def query(tablename, user_cur, conn, cols, n):
+    s1 = f"AVG({cols[0]}), AVG({cols[1]}), AVG({cols[2]}), AVG({cols[3]}), AVG({cols[4]}), AVG({cols[5]})"
+    s2 = f"{cols[0]}, {cols[1]}, {cols[2]}, {cols[3]}, {cols[4]}, {cols[5]}"
+    statement = f"SELECT {s1} FROM (SELECT {s2} FROM {tablename} ORDER BY epoch DESC LIMIT {n}) AS a"
+    user_cur.execute(statement)
+    conn.commit()
+    res = []
+    for i in user_cur.fetchone():
+        if i != None:
+            res.append(round(i,2))
+        else:
+            res.append(i)
+    return res
 
 print("\n\n")
 
@@ -153,7 +178,7 @@ This route is used to update the variables as seen by the client. It is called b
 """
 @app.route('/update', methods=["GET","POST"])
 def update():
-    print("Updated data")
+    print("\nUpdated data")
     global updates, temp, pressure, humid, wind_v, wind_d, rain, coords, session_duration
     updates += 1
     documents_ = {
@@ -166,11 +191,38 @@ def update():
         'windvector': wind_d,
         'rainfall': rain,
         'timenow': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        'time_elapsed': (time() - start_time),
+        'time_elapsed': (time.time() - session_start),
         'coords': coords
     }
     return Response(json.dumps(documents_), mimetype='application/json')
 
+
+@app.route('/update_sql', methods=["GET", "POST"])
+def update_sql():
+    print("\nClient requested update: querying SQL table.")
+    global user_cur, conn, tablename, rolling_average, sampletime
+    cols = ["pressure", "temperature", "humidity", "wind_speed", "rain", "wind_direction"]
+    n = (rolling_average * 60) / sampletime
+    res = query(tablename, user_cur, conn, cols, n)
+    if res == None:
+        res = [None, None, None, None, None, None]
+    #print(res)
+    global updates, coords, session_duration
+    updates += 1
+    documents_ = {
+        'updates': updates,
+        'session_duration': session_duration,
+        'temperature': res[1],
+        'pressure': res[0],
+        'humidity': res[2],
+        'windspeed': res[3],
+        'windvector': res[5],
+        'rainfall': res[4],
+        'timenow': datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        'time_elapsed': (time.time() - session_start),
+        'coords': coords
+    }
+    return Response(json.dumps(documents_), mimetype='application/json') 
 
 """
 The following thread is intended to sample the I2C sensors at a set interval. 
@@ -198,24 +250,41 @@ except:
 
 def check_sensors(sampletime):
     while True:
+        #print("Sensors updated.")
         global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration, cur, conn, tablename # Make reference to global variables
-        climate_vals = bme.report() # Read BME values
-        pressure = round(climate_vals[0]/1000,3)
-        humid = round(climate_vals[1],3)
-        temp = round(climate_vals[2],3)
-        wind_v = anemo.report()
-        wind_d = windvane.report()
-        rain = raingauge.report()
-        t_datetime = datetime.datetime()
+        if cli==True:
+            climate_vals = bme.report() # Read BME values
+            pressure = round(climate_vals[0]/1000,3)
+            humid = round(climate_vals[1],3)
+            temp = round(climate_vals[2],3)
+        else:
+            pressure = None
+            humid = None
+            temp = None
+        if wis==True:
+            wind_v = anemo.report()
+        else:
+            wind_v = None
+        if wid==True:
+            wind_d = windvane.report()
+        else:
+            wind_d = None
+        if rai==True:
+            rain = raingauge.report()
+        else:
+            rain = None
+        t_datetime = datetime.datetime.now()
         t = t_datetime.timestamp()
+
         session_duration = str(datetime.timedelta(seconds=int(t - session_start)))
         timenow = time.strftime("%Y-%m-%d %H:%M", time.gmtime(t)),
         coords = coords
 
         ## Insert into database
-        #true_time, date, time, pressure, humidity, temperature, wind_speed, rain_tips, wind_direction
+        # Columns: true_time, date, time, pressure, humidity, temperature, wind_speed, rain_tips, wind_direction
         res = [t, t_datetime.strftime("%Y-%m-%d"), t_datetime.strftime("%H:%M:%S"), pressure, humid, temp, wind_v, rain, wind_d]
         insert(tablename, cur, conn, res)
+        #print("Insertion made to SQL database.")
         time.sleep(sampletime)
 
 """
@@ -224,14 +293,19 @@ This route allows for camera streaming
 @app.route('/video_feed')
 def video_feed():
     print("Video feed called")
-    return Response(camera.gen_frames(),mimetype='multipart/x-mixed-replace;boundary=frame')
+    if cam==True:
+        return Response(camera.gen_frames(),mimetype='multipart/x-mixed-replace;boundary=frame')
+    else:
+        return Response("Nothing.")
 
 sensor_thread = threading.Thread(target = check_sensors, args = [sampletime]) # Bind check_sensors function to a new thread called sensor_thread
 sensor_thread.start() # Begin sensor checking threads
 
 session_start = time.time()
 if __name__  == '__main__':
+    print("### BEGINNING FLASK SERVER ###")
     app.run(debug=False,port=80,host='0.0.0.0') #Start listening on port 80.
 
-camera.cap.release()
-cv2.destroyAllWindows()
+if cam==True:
+    camera.cap.release()
+    cv2.destroyAllWindows()

@@ -4,7 +4,7 @@ try:
     from smbus2 import SMBus
 except ImportError:
     from smbus import SMBus
-from bme280 import BME280
+import bme280
 from time import sleep #allows for timing functions
 
 class climate_sensor():
@@ -14,7 +14,7 @@ class climate_sensor():
 		self.port = 1
 		self.address = 0x76 #hexadecimal address of BME280 device; depends on manufacturer, refer to documentation
 		self.bus = SMBus(1) #instantiate an SMBus object for I2C interactions
-		self.bme280 = BME280(i2c_dev = self.bus) #use a bme280 library function to apply the bus and address
+		bme280.load_calibration_params(self.bus, self.address)
 
 		# Last values
 		self.p = 0 # Last value of humidity
@@ -30,7 +30,8 @@ class climate_sensor():
 		"""Takes a sample and updates 
 		
 		"""
-		self.update(self.bme280.get_pressure(),self.bme280.get_humidity(),self.bme280.get_temperature()) #return each output from the sensor
+		data = bme280.sample(self.bus, self.address)
+		self.update(data.pressure, data.humidity, data.temperature) #return each output from the sensor
 
 	def update(self,p,h,t):
 		"""Updates member variable values for humidity, pressure, temperature
