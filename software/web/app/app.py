@@ -6,9 +6,10 @@ Main program from which webapp is run.
 """
 
 ## Import libraries
-from turtle import title
-from flask import Flask, render_template, Response #Load flask module
-import datetime
+from distutils.log import error
+from turtle import title # 
+from flask import Flask, render_template, Response # Flask module. Webapp engine.
+import datetime 
 import numpy as np
 import sys
 import threading
@@ -17,13 +18,22 @@ import json
 import time
 import psycopg2
 from flask import make_response
+import platform # Used to check OS, see whether being run on Pi
+import configparser
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+mysys = platform.system()
+if mysys != "Linux":
+    print("Not running on Raspberry Pi.\n")
 
 print("### INITIALIZING SENSOR DRIVERS ###")
-cam=False
-cli=True
-rai=False
-wis=False
-wid=True
+cam=config['SENSORS']['CAM']
+cli=config['SENSORS']['CLI']
+rai=config['SENSORS']['RAI']
+wis=config['SENSORS']['WIS']
+wid=config['SENSORS']['WID']
+
 try:
     import drivers.climate as climate
 except:
@@ -50,10 +60,8 @@ except:
     print("Camera driver could not be imported.")
     cam=False
 
-#print("\n\n")
-
 ## Set params
-sampletime = 0.1 # 2 seconds sample rate for sensors
+sampletime = float(config['SENSORS']['SAMPLETIME']) # 2 seconds sample rate for sensors
 rolling_average = 0.5 # Rolling average in minutes
 
 ## Initialize things
@@ -66,11 +74,13 @@ print("\n\n")
 
 ## Connect to psql database
 print("### DATABASE INITIALIZING ###")
-dbname = "gurgibase" # The name of an existing database
-username = "gurgi"
-mypass = "rocket"
+dbname = config['DATABASE']['DBNAME'] # The name of an existing database
+username = config['DATABASE']['USERNAME']
+mypass = config['DATABASE']['PASSWORD']
+tablename = config['DATABASE']['TABLENAME']
+print(f"dbname: {dbname}, username: {username}, pass: {mypass}, tablename: {tablename}")
 init_date = datetime.datetime.now().strftime(f"%Y_%m_%d_%Hh%Mm%Ss")
-tablename = f"Session_{init_date}"
+#tablename = f"Session_{init_date}"
 print("Connecting to SQL database...")
 try:
     conn = psycopg2.connect( # Connect to database
@@ -91,8 +101,8 @@ cur.execute("SELECT version()")
 print("Success. Cursor object is working correctly.")
 print(f'PostgreSQL database version: {cur.fetchone()} ') 
 
-cols = ["epoch", "date", "time", "pressure", "humidity", "temperature", "wind_speed", "rain", "wind_direction"]
-datatype = ["FLOAT", "VARCHAR(30)", "VARCHAR(30)", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT"]
+cols = ["session", "epoch", "date", "time", "pressure", "humidity", "temperature", "wind_speed", "rain", "wind_direction"]
+datatype = ["SMALLINT", "FLOAT", "VARCHAR(30)", "VARCHAR(30)", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT", "FLOAT"]
 
 def create_table(tablename,cols, datatype):
     global conn, cur
@@ -108,11 +118,21 @@ def create_table(tablename,cols, datatype):
     cur.execute(statement)
     conn.commit()
 
-create_table(tablename, cols, datatype)
-print(f"Table {tablename} created.")
+#create_table(tablename, cols, datatype)
+#print(f"Table {tablename} created.")
+
+## Get new session ID
+cur.execute("SELECT MAX(session) as latest_session FROM DATA;")
+conn.commit()
+session = cur.fetchone()[0];
+if session == None:
+    session = 1
+else:
+    session = session + 1
+print(f"Database Session ID: {session}")
 
 def insert(tablename, cur, conn, res):
-    statement = f"INSERT INTO {tablename}(epoch, date, time, pressure, humidity, temperature, wind_speed, rain, wind_direction) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);" # 
+    statement = f"INSERT INTO {tablename}(session, epoch, date, time, pressure, humidity, temperature, wind_speed, rain, wind_direction) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);" # 
     statement = cur.mogrify(statement, res)
     cur.execute(statement)
     conn.commit()
@@ -250,7 +270,7 @@ except:
 
 def check_sensors(sampletime):
     while True:
-        #print("Sensors updated.")
+        print("Sensors updated.")
         global temp, pressure, humid, wind_v, wind_d, rain, coords, timenow, session_duration, cur, conn, tablename # Make reference to global variables
         if cli==True:
             climate_vals = bme.report() # Read BME values
@@ -282,7 +302,7 @@ def check_sensors(sampletime):
 
         ## Insert into database
         # Columns: true_time, date, time, pressure, humidity, temperature, wind_speed, rain_tips, wind_direction
-        res = [t, t_datetime.strftime("%Y-%m-%d"), t_datetime.strftime("%H:%M:%S"), pressure, humid, temp, wind_v, rain, wind_d]
+        res = [session, t, t_datetime.strftime("%Y-%m-%d"), t_datetime.strftime("%H:%M:%S"), pressure, humid, temp, wind_v, rain, wind_d]
         insert(tablename, cur, conn, res)
         #print("Insertion made to SQL database.")
         time.sleep(sampletime)
